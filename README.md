@@ -22,7 +22,7 @@ conda install -c bioconda snakemake
 ### Set up riboduct
 Download by
 ```
-git https://github.com/msfuji/riboduct.git
+git clone https://github.com/msfuji/riboduct.git
 ```
 Set up by
 ```
