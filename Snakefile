@@ -2,13 +2,15 @@ rule download_genome:
     output:
         "reference/genome/hs37d5.fa.gz"
     shell:
-        "wget ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/reference/phase2_reference_assembly_sequence/hs37d5.fa.gz"
+        "curl -O ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/reference/phase2_reference_assembly_sequence/hs37d5.fa.gz &&"
+        "mv hs37d5.fa.gz ${output}"
 
 rule download_gtf:
     output:
         "reference/gene_model/gencode.v19.annotation.gtf.gz"
     shell:
-        "wget ftp://ftp.sanger.ac.uk/pub/gencode/Gencode_human/release_19/gencode.v19.annotation.gtf.gz"
+        "curl -O ftp://ftp.sanger.ac.uk/pub/gencode/Gencode_human/release_19/gencode.v19.annotation.gtf.gz &&"
+        "mv gencode.v19.annotation.gtf.gz {output}"
 
 rule format_gtf:
     input:
@@ -23,13 +25,14 @@ rule setup_db:
         genome="reference/genome/hs37d5.fa.gz",
         gtf="reference/gene_model/gencode.v19.annotation.hs37d5_chr.gtf"
     output:
-        "reference/star_index/SAindex"
+        dir="reference/star_index",
+        "{output.dir}/SAindex"
     threads: 4
     shell:
-        "dir=`dirname {output}`; rm -f $dir/* &&"
+        "rm -f {output.dir}/* &&"
         "star"
         "--runMode genomeGenerate"
-        "--genomeDir {output}"
+        "--genomeDir {output.dir}"
         "--genomeFastaFiles {genome}"
         "--sjdbOverhang 125"
         "--sjdbGTFfile {gtf}"
