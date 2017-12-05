@@ -19,7 +19,7 @@ To install `Snakemake`,
 conda install -c bioconda snakemake
 ```
 
-### Set up riboduct
+### Set up pipeline
 Download riboduct and set up the conda environment.
 ```
 git clone https://github.com/msfuji/riboduct.git
@@ -29,11 +29,13 @@ conda env create --name riboduct --file environment.yaml
 
 Download reference human genome (hs37d5) and gene model (GENCODE v19).
 ```
+# Activate the conda environment. If you are using pyenv, this may cause a conflict. To resolve this, specify the full path of activate, which can be found by "conda info -e".
 source activate riboduct
+# Download genome, gtf and index them. This may take a while.
 snakemake setup_db
 source deactivate
 ```
-If you are using `pyenv`, `activate` may conflict. In that case, use `conda info -e` to find the full path of `activate`.
+
 
 ## Usage
 
