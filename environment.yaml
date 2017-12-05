@@ -1,4 +1,6 @@
 name: riboduct
+channels:
+  - bioconda
 dependencies:
   - python=3.6.3
   - snakemake=3.13.3
