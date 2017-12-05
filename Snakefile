@@ -25,8 +25,8 @@ rule setup_db:
         genome="reference/genome/hs37d5.fa.gz",
         gtf="reference/gene_model/gencode.v19.annotation.hs37d5_chr.gtf"
     output:
-        "reference/star_index/SAindex"
-        dir="reference/star_index",
+        "reference/star_index/SAindex",
+        dir="reference/star_index"
     threads: 4
     shell:
         "rm -f {output.dir}/* &&"
