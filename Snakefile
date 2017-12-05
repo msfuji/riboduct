@@ -5,6 +5,14 @@ rule download_genome:
         "curl -O ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/reference/phase2_reference_assembly_sequence/hs37d5.fa.gz && "
         "mv hs37d5.fa.gz {output}"
 
+rule decompress_genome:
+    input:
+        "reference/genome/hs37d5.fa.gz"
+    output:
+        "reference/genome/hs37d5.fa"
+    shell:
+        "gunzip -c {input} > {output}""
+
 rule download_gtf:
     output:
         "reference/gene_model/gencode.v19.annotation.gtf.gz"
@@ -22,12 +30,12 @@ rule format_gtf:
 
 rule setup_db:
     input:
-        genome="reference/genome/hs37d5.fa.gz",
+        genome="reference/genome/hs37d5.fa",
         gtf="reference/gene_model/gencode.v19.annotation.hs37d5_chr.gtf"
     output:
         "reference/star_index/SAindex",
         dir="reference/star_index"
-    threads: 4
+    threads: 8
     shell:
         "rm -f {output.dir}/* && "
         "star "
@@ -36,4 +44,4 @@ rule setup_db:
         "--genomeFastaFiles {input.genome} "
         "--sjdbOverhang 125 "
         "--sjdbGTFfile {input.gtf} "
-        "--runThreadN {threads} "
+        "--runThreadN {threads}"
