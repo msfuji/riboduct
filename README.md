@@ -14,7 +14,7 @@ For MacOSX,
 curl -O https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
 bash Miniconda3-latest-MacOSX-x86_64.sh
 ```
-To install Snakemake,
+To install `Snakemake`,
 ```
 conda install -c bioconda snakemake
 ```
@@ -38,5 +38,5 @@ If you are using `pyenv`, the above command may conflict. In that case, use `con
 
 ### Finishing riboduct
 ```
-source activate riboduct
+source deactivate
 ```
