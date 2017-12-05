@@ -30,10 +30,10 @@ rule setup_db:
     threads: 4
     shell:
         "rm -f {output.dir}/* && "
-        "star"
-        "--runMode genomeGenerate"
-        "--genomeDir {output.dir}"
-        "--genomeFastaFiles {input.genome}"
-        "--sjdbOverhang 125"
-        "--sjdbGTFfile {input.gtf}"
-        "--runThreadN {threads}"
+        "star "
+        "--runMode genomeGenerate "
+        "--genomeDir {output.dir} "
+        "--genomeFastaFiles {input.genome} "
+        "--sjdbOverhang 125 "
+        "--sjdbGTFfile {input.gtf} "
+        "--runThreadN {threads} "
