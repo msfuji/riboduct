@@ -11,7 +11,7 @@ rule decompress_genome:
     output:
         "reference/genome/hs37d5.fa"
     shell:
-        "gunzip -c {input} > {output}""
+        "gunzip -c {input} > {output}"
 
 rule download_gtf:
     output:
