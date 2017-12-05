@@ -2,14 +2,14 @@ rule download_genome:
     output:
         "reference/genome/hs37d5.fa.gz"
     shell:
-        "curl -O ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/reference/phase2_reference_assembly_sequence/hs37d5.fa.gz &&"
-        "mv hs37d5.fa.gz ${output}"
+        "curl -O ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/reference/phase2_reference_assembly_sequence/hs37d5.fa.gz && "
+        "mv hs37d5.fa.gz {output}"
 
 rule download_gtf:
     output:
         "reference/gene_model/gencode.v19.annotation.gtf.gz"
     shell:
-        "curl -O ftp://ftp.sanger.ac.uk/pub/gencode/Gencode_human/release_19/gencode.v19.annotation.gtf.gz &&"
+        "curl -O ftp://ftp.sanger.ac.uk/pub/gencode/Gencode_human/release_19/gencode.v19.annotation.gtf.gz && "
         "mv gencode.v19.annotation.gtf.gz {output}"
 
 rule format_gtf:
@@ -29,7 +29,7 @@ rule setup_db:
         dir="reference/star_index"
     threads: 4
     shell:
-        "rm -f {output.dir}/* &&"
+        "rm -f {output.dir}/* && "
         "star"
         "--runMode genomeGenerate"
         "--genomeDir {output.dir}"
