@@ -23,12 +23,14 @@ rule setup_db:
         genome="reference/genome/hs37d5.fa.gz",
         gtf="reference/gene_model/gencode.v19.annotation.hs37d5_chr.gtf"
     output:
-
+        "reference/star_index/SAindex"
+    threads: 4
     shell:
+        "dir=`dirname {output}`; rm -f $dir/* &&"
         "star"
         "--runMode genomeGenerate"
         "--genomeDir {output}"
         "--genomeFastaFiles {genome}"
-        "--sjdbOverhang 100"
+        "--sjdbOverhang 125"
         "--sjdbGTFfile {gtf}"
-        "--runThreadN 8"
+        "--runThreadN {threads}"

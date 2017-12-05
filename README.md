@@ -29,8 +29,7 @@ conda env create --name riboduct --file environment.yaml
 
 Download reference human genome (hs37d5) and gene model (GENCODE v19).
 ```
-# Activate the conda environment. If you are using pyenv, this may cause a conflict.
-# To resolve this, specify the full path of activate, which can be found by "conda info -e".
+# Activate the conda environment.
 source activate riboduct
 
 # Download genome, gtf and index them. This may take a while.
@@ -39,7 +38,6 @@ snakemake setup_db
 source deactivate
 ```
 
-
 ## Usage
 
 ### Starting riboduct
@@ -47,8 +45,6 @@ Activate the conda environment by
 ```
 source activate riboduct
 ```
-
-
 
 ### Finishing riboduct
 ```
