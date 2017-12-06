@@ -1,5 +1,13 @@
 bin_dir=config["env_dir"]+"/bin/"
 
+# rule all:
+#     input:
+#         "expression/raw_counts.gmt"
+#         "expression/fpkm.gmt"
+#         "expression/fpkm_uq.gmt"
+
+################################################################################
+
 rule download_genome:
     output:
         config["db_dir"]+"/genome/hs37d5.fa.gz"
@@ -55,4 +63,7 @@ rule setup_db:
         "--genomeFastaFiles {input.genome} "
         "--sjdbOverhang 100 "
         "--sjdbGTFfile {input.gtf} "
-        "--runThreadN {threads}"
+        "--runThreadN {threads} "
+        "--outFileNamePrefix {output.dir}"
+
+################################################################################
