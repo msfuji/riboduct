@@ -1,51 +1,51 @@
 rule download_genome:
     output:
-        "reference/genome/hs37d5.fa.gz"
+        config["db_dir"]+"/genome/hs37d5.fa.gz"
     log:
-        "reference/genome/download_genome.log"
+        config["db_dir"]+"/genome/download_genome.log"
     shell:
-        "curl -O ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/reference/phase2_reference_assembly_sequence/hs37d5.fa.gz 2> {log} && "
+        "curl -O ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/reference/phase2_reference_assembly_sequence/hs37d5.fa.gz && "
         "mv hs37d5.fa.gz {output}"
 
 rule decompress_genome:
     input:
-        "reference/genome/hs37d5.fa.gz"
+        config["db_dir"]+"/genome/hs37d5.fa.gz"
     output:
-        "reference/genome/hs37d5.fa"
+        config["db_dir"]+"/genome/hs37d5.fa"
     log:
-        "reference/genome/decompress_genome.log"
+        config["db_dir"]+"/genome/decompress_genome.log"
     shell:
-        "gunzip -c {input} > {output} 2> {log}"
+        "gunzip -c {input} > {output}"
 
 rule download_gtf:
     output:
-        "reference/gene_model/gencode.v19.annotation.gtf.gz"
+        config["db_dir"]+"/gene_model/gencode.v19.annotation.gtf.gz"
     log:
-        "reference/gene_model/download_gtf.log"
+        config["db_dir"]+"/gene_model/download_gtf.log"
     shell:
-        "curl -O ftp://ftp.sanger.ac.uk/pub/gencode/Gencode_human/release_19/gencode.v19.annotation.gtf.gz 2> {log} && "
+        "curl -O ftp://ftp.sanger.ac.uk/pub/gencode/Gencode_human/release_19/gencode.v19.annotation.gtf.gz && "
         "mv gencode.v19.annotation.gtf.gz {output}"
 
 rule format_gtf:
     input:
-        "reference/gene_model/gencode.v19.annotation.gtf.gz"
+        config["db_dir"]+"/gene_model/gencode.v19.annotation.gtf.gz"
     output:
-        "reference/gene_model/gencode.v19.annotation.hs37d5_chr.gtf"
+        config["db_dir"]+"/gene_model/gencode.v19.annotation.hs37d5_chr.gtf"
     log:
-        "reference/gene_model/format_gtf.log"
+        config["db_dir"]+"/gene_model/format_gtf.log"
     shell:
-        "gunzip -c {input} | tail -n +6 | sed -e \"s/^chrM/MT/g;s/^chr//g\" > {output} 2> {log}"
+        "gunzip -c {input} | tail -n +6 | sed -e \"s/^chrM/MT/g;s/^chr//g\" > {output}"
 
 rule setup_db:
     input:
-        genome="reference/genome/hs37d5.fa",
-        gtf="reference/gene_model/gencode.v19.annotation.hs37d5_chr.gtf"
+        genome=config["db_dir"]+"/genome/hs37d5.fa",
+        gtf=config["db_dir"]+"/gene_model/gencode.v19.annotation.hs37d5_chr.gtf"
     output:
-        "reference/star_index/SAindex",
-        dir="reference/star_index"
+        config["db_dir"]+"/star_index/SAindex",
+        dir=config["db_dir"]+"/star_index"
     threads: 8
     log:
-        "reference/star_index/setup_db.log"
+        config["db_dir"]+"/star_index/setup_db.log"
     shell:
         "rm -f {output.dir}/* && "
         "star "
@@ -54,4 +54,4 @@ rule setup_db:
         "--genomeFastaFiles {input.genome} "
         "--sjdbOverhang 125 "
         "--sjdbGTFfile {input.gtf} "
-        "--runThreadN {threads} 2> {log}"
+        "--runThreadN {threads}"

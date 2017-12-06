@@ -1,0 +1,9 @@
+db_dir: ~/riboduct_db
+
+fastq:
+  sample_A:
+    - fastq/run1/sample_A.R1.fastq
+    - fastq/run1/sample_A.R2.fastq
+  sample_B:
+    - [fastq/run1/sample_B.R1.fastq, fastq/run2/sample_B.R1.fastq]
+    - [fastq/run1/sample_B.R2.fastq, fastq/run2/sample_B.R2.fastq]
