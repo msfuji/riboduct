@@ -47,7 +47,7 @@ rule setup_db:
         config["db_dir"]+"/star_index/setup_db.log/"
     threads: 8
     shell:
-        "star "
+        "STAR "
         "--runMode genomeGenerate "
         "--genomeDir {output.dir} "
         "--genomeFastaFiles {input.genome} "
