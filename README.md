@@ -33,9 +33,9 @@ Download reference human genome (hs37d5) and gene model (GENCODE v19).
 source activate riboduct
 
 # Download genome, gtf and index them. This may take a long time.
-snakemake setup_db
+snakemake --configfile config.yaml setup_db
 # Speed up indexing when you are working on clusters.
-# snakemake --cluster "qsub -pe def_slot {threads} -cwd -j y -o {log}" --jobs 2 setup_db
+# snakemake --configfile config.yaml --cluster "qsub -pe def_slot {threads} -o {log} -e {log}" --jobs 2 setup_db
 
 source deactivate
 ```
