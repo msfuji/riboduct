@@ -32,8 +32,10 @@ Download reference human genome (hs37d5) and gene model (GENCODE v19).
 # Activate the conda environment.
 source activate riboduct
 
-# Download genome, gtf and index them. This may take a while.
+# Download genome, gtf and index them. This may take a long time.
 snakemake setup_db
+# Speed up indexing when you are working on clusters.
+# snakemake --cluster "qsub -pe def_slot {threads} setup_db"
 
 source deactivate
 ```
