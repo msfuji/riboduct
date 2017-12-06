@@ -47,11 +47,11 @@ rule setup_db:
         config["db_dir"]+"/star_index/setup_db.log/"
     threads: 8
     shell:
-        "rm -f {output.dir}/* && "
+        "rm -rf {output.dir}/* && "
         "star "
         "--runMode genomeGenerate "
         "--genomeDir {output.dir} "
         "--genomeFastaFiles {input.genome} "
-        "--sjdbOverhang 125 "
+        "--sjdbOverhang 100 "
         "--sjdbGTFfile {input.gtf} "
         "--runThreadN {threads}"
