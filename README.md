@@ -3,7 +3,7 @@ RNA-Seq pipeline.
 
 ## Installation
 ### Install dependencies
-`riboduct` requires `conda` package manager and `Snakemake` workflow manageer.
+`riboduct` requires `conda` package manager and `Snakemake` workflow manager.
 To install `conda` for Linux,
 ```
 wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh

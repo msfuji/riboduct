@@ -1,3 +1,7 @@
+import os
+
+conda_dir=os.environ["CONDA_PREFIX"] + "/bin/"
+
 rule download_genome:
     output:
         config["db_dir"]+"/genome/hs37d5.fa.gz"
@@ -47,7 +51,7 @@ rule setup_db:
         config["db_dir"]+"/star_index/setup_db.log/"
     threads: 8
     shell:
-        "STAR "
+        conda_dir+"STAR "
         "--runMode genomeGenerate "
         "--genomeDir {output.dir} "
         "--genomeFastaFiles {input.genome} "
