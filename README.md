@@ -25,12 +25,13 @@ Download `riboduct` and set up the `conda` environment.
 git clone https://github.com/msfuji/riboduct.git
 cd riboduct
 conda env create --name riboduct --file environment.yaml
-source activate riboduct
 ```
 Download reference human genome (hs37d5) and gene model (GENCODE v19).
 ```
 # edit db_dir
 vi config.yaml
+
+source activate riboduct
 
 # Download genome and gtf to db_dir, and index them. This may take a long time.
 snakemake --configfile config.yaml --config env_dir=$CONDA_PREFIX setup_db
