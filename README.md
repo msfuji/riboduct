@@ -34,7 +34,7 @@ vi config.yaml
 
 # Download genome and gtf to db_dir, and index them. This may take a long time.
 snakemake --configfile config.yaml --config env_dir=$CONDA_PREFIX setup_db
-# Speed up indexing on SGE clusters.
+# Speed up indexing on SGE clusters
 # snakemake --configfile config.yaml --config env_dir=$CONDA_PREFIX \
 # --cluster "qsub -pe def_slot {threads} -o {log} -e {log}" --jobs 2 setup_db
 
@@ -49,7 +49,17 @@ Activate the conda environment by
 source activate riboduct
 ```
 
-### Finishing riboduct
+
 ```
+# edit db_dir
+vi config.yaml
+
+# run
+snakemake --configfile config.yaml --config env_dir=$CONDA_PREFIX
+# run on SGE clusters
+# snakemake --configfile config.yaml --config env_dir=$CONDA_PREFIX \
+# --cluster "qsub -pe def_slot {threads} -o {log} -e {log}" --jobs 100
+
+# Finishing riboduct
 source deactivate
 ```

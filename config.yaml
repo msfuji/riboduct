@@ -1,11 +1,15 @@
 # directory where you want to install database
-db_dir: /path/to/db
+#db_dir: /path/to/db
+db_dir: /Users/msfuji/riboduct_db/
 
-# if you have gzipped FASTQ files, change readFilesCommand of Snakefile to "gunzip -c"
+#readFilesCommand: "cat" # for uncompressed FASTQ
+#readFilesCommand: "gunzip -c" # for gzipped FASTQ
+readFilesCommand: "bunzip2 -c" # for bzip2-compressed FASTQ
+
 fastq:
   sample_A:
     - example/run1/sample_A.R1.fastq.bz2
     - example/run1/sample_A.R2.fastq.bz2
   sample_B:
-    - [example/run1/sample_B.R1.fastq.bz2, example/run2/sample_B.R1.fastq.bz2]
-    - [example/run1/sample_B.R2.fastq.bz2, example/run2/sample_B.R2.fastq.bz2]
+    - example/run1/sample_B.R1.fastq.bz2,example/run2/sample_B.R1.fastq.bz2
+    - example/run1/sample_B.R2.fastq.bz2,example/run2/sample_B.R2.fastq.bz2

@@ -68,15 +68,30 @@ rule setup_db:
 
 ################################################################################
 
-# decompress FASTQ and/or merge multiple runs if necessary.
-rule setup_fastq:
+rule star_1_pass:
     input:
+        lambda wildcards: config["fastq"][wildcards.sample],
+        index=config["db_dir"]+"/star_index/"
+    output:
+        "star_1_pass/{sample_id}/SJ.out.tab"
+    shell:
+        "touch {output}"
 
-
-
-rule star_1st_pass:
+rule star_1_pass_index:
     input:
-        wildcards
+        "star_1_pass/{sample_id}/SJ.out.tab"
+    output:
+        "star_1_pass/index/SAindex",
+    shell:
+        "touch {output}"
+
+rule star_2_pass:
+    input:
+        "star_1_pass/index"
+    output:
+        "star_2_pass/{sample_id}/Aligned.sortedByCoord.out.bam"
+    shell:
+        "touch {output}"
 
 ################################################################################
 #
@@ -84,7 +99,7 @@ rule star_1st_pass:
 #
 rule raw_counts:
     input:
-        "bam/{sample_id}.bam"
+        "star_2_pass/{sample_id}/Aligned.sortedByCoord.out.bam"
     output:
         "expression/raw_counts/{sample_id}.txt"
     shell:
