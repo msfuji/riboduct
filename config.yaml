@@ -10,6 +10,6 @@ fastq:
   sample_A:
     - example/run1/sample_A.R1.fastq.bz2
     - example/run1/sample_A.R2.fastq.bz2
-  sample_B:
-    - example/run1/sample_B.R1.fastq.bz2,example/run2/sample_B.R1.fastq.bz2
-    - example/run1/sample_B.R2.fastq.bz2,example/run2/sample_B.R2.fastq.bz2
+  sample_B: # multiple runs from the same library
+    - [example/run1/sample_B.R1.fastq.bz2, example/run2/sample_B.R1.fastq.bz2]
+    - [example/run1/sample_B.R2.fastq.bz2, example/run2/sample_B.R2.fastq.bz2]

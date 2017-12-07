@@ -2,11 +2,14 @@ bin_dir=config["env_dir"]+"/bin/"
 
 rule all:
     input:
-        "expression/raw_counts.gmt"
+        "expression/raw_counts.txt"
 #         "expression/fpkm.gmt"
 #         "expression/fpkm_uq.gmt"
 
 ################################################################################
+#
+# database construction
+#
 
 rule download_genome:
     output:
@@ -64,51 +67,107 @@ rule setup_db:
         "--sjdbOverhang 100 "
         "--sjdbGTFfile {input.gtf} "
         "--runThreadN {threads} "
-        "--outFileNamePrefix {output.dir}"
+        "--outFileNamePrefix {output.dir} "
 
 ################################################################################
+#
+# read mapping
+#
 
 rule star_1_pass:
     input:
-        lambda wildcards: config["fastq"][wildcards.sample],
-        index=config["db_dir"]+"/star_index/"
+        read1=lambda wildcards: config["fastq"][wildcards.sample_id][0],
+        read2=lambda wildcards: config["fastq"][wildcards.sample_id][1],
     output:
-        "star_1_pass/{sample_id}/SJ.out.tab"
+        "star_1_pass/{sample_id}/SJ.out.tab",
+        dir="star_1_pass/{sample_id}/"
+    params:
+        read1=lambda wildcards: ",".join(config["fastq"][wildcards.sample_id][0]),
+        read2=lambda wildcards: ",".join(config["fastq"][wildcards.sample_id][1]),
+        index=config["db_dir"]+"/star_index/",
+        readFilesCommand=config["readFilesCommand"]
+    threads: 8
     shell:
-        "touch {output}"
-
-rule star_1_pass_index:
-    input:
-        "star_1_pass/{sample_id}/SJ.out.tab"
-    output:
-        "star_1_pass/index/SAindex",
-    shell:
-        "touch {output}"
+        bin_dir+"STAR "
+        "--genomeDir {params.index} "
+        "--readFilesIn {params.read1} {params.read2} "
+        " --runThreadN {threads} "
+        "--outFilterMultimapScoreRange 1 "
+        "--outFilterMultimapNmax 20 "
+        "--outFilterMismatchNmax 10 "
+        "--alignIntronMax 500000 "
+        "--alignMatesGapMax 1000000 "
+        "--sjdbScore 2 "
+        "--alignSJDBoverhangMin 1 "
+        "--genomeLoad NoSharedMemory "
+        "--readFilesCommand {params.readFilesCommand} "
+        "--outFilterMatchNminOverLread 0.33 "
+        "--outFilterScoreMinOverLread 0.33 "
+        "--sjdbOverhang 100 "
+        "--outSAMstrandField intronMotif "
+        "--outSAMtype None "
+        "--outSAMmode None "
+        "--outFileNamePrefix {output.dir} "
 
 rule star_2_pass:
     input:
-        "star_1_pass/index"
+        read1=lambda wildcards: config["fastq"][wildcards.sample_id][0],
+        read2=lambda wildcards: config["fastq"][wildcards.sample_id][1],
+        sj=expand("star_1_pass/{sample_id}/SJ.out.tab", sample_id=config["fastq"]),
     output:
-        "star_2_pass/{sample_id}/Aligned.sortedByCoord.out.bam"
+        "star_2_pass/{sample_id}/Aligned.sortedByCoord.out.bam",
+        dir="star_2_pass/{sample_id}/"
+    params:
+        read1=lambda wildcards: ",".join(config["fastq"][wildcards.sample_id][0]),
+        read2=lambda wildcards: ",".join(config["fastq"][wildcards.sample_id][1]),
+        index=config["db_dir"]+"/star_index/",
+        readFilesCommand=config["readFilesCommand"]
+    threads: 8
     shell:
-        "touch {output}"
+        bin_dir+"STAR "
+        "--genomeDir {params.index} "
+        "--readFilesIn {params.read1} {params.read2} "
+        "--runThreadN {threads} "
+        "--outFilterMultimapScoreRange 1 "
+        "--outFilterMultimapNmax 20 "
+        "--outFilterMismatchNmax 10 "
+        "--alignIntronMax 500000 "
+        "--alignMatesGapMax 1000000 "
+        "--sjdbScore 2 "
+        "--alignSJDBoverhangMin 1 "
+        "--genomeLoad NoSharedMemory "
+        "--limitBAMsortRAM 0 "
+        "--readFilesCommand {params.readFilesCommand} "
+        "--outFilterMatchNminOverLread 0.33 "
+        "--outFilterScoreMinOverLread 0.33 "
+        "--sjdbOverhang 100 "
+        "--outSAMstrandField intronMotif "
+        "--outSAMattributes NH HI NM MD AS XS "
+        "--outSAMunmapped Within "
+        "--outSAMtype BAM SortedByCoordinate "
+        "--outSAMheaderHD @HD VN:1.4 "
+        "--outFileNamePrefix {output.dir} "
+        "--sjdbFileChrStartEnd {input.sj} "
 
 ################################################################################
 #
-# TODO
+# expression quantification
 #
+
 rule raw_counts:
     input:
-        "star_2_pass/{sample_id}/Aligned.sortedByCoord.out.bam"
+        expand("star_2_pass/{sample_id}/Aligned.sortedByCoord.out.bam", sample_id=config["fastq"])
     output:
-        "expression/raw_counts/{sample_id}.txt"
+        "expression/raw_counts.txt"
+    params:
+        gtf=config["db_dir"]+"/gene_model/gencode.v19.annotation.hs37d5_chr.gtf",
+        strandness=2 # 2 for Illumina TruSeq
+    threads: 16
     shell:
-        "touch {output}"
-
-rule merge_raw_counts:
-    input:
-        expand("expression/raw_counts/{sample_id}.txt", sample_id=config["fastq"])
-    output:
-        "expression/raw_counts.gmt"
-    shell:
-        "touch ${output}"
+        bin_dir+"featureCounts "
+        "-p "
+        "-T {threads} "
+        "-s {params.strandness} "
+        "-a {params.gtf} "
+        "-o {output} "
+        "{input} "
