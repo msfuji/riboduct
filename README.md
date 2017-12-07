@@ -31,9 +31,10 @@ Download reference human genome (hs37d5) and gene model (GENCODE v19).
 First, edit `config.yaml` to set `db_dir` and `env_dir`.
 ```
 # Download genome, gtf and index them. This may take a long time.
-snakemake --configfile config.yaml setup_db
+snakemake --configfile config.yaml --config env_dir=$CONDA_PREFIX setup_db
 # Speed up indexing on SGE clusters.
-# snakemake --configfile config.yaml --cluster "qsub -pe def_slot {threads} -o {log} -e {log}" --jobs 2 setup_db
+# snakemake --configfile config.yaml --config env_dir=$CONDA_PREFIX \
+# --cluster "qsub -pe def_slot {threads} -o {log} -e {log}" --jobs 2 setup_db
 
 source deactivate
 ```

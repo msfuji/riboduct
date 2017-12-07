@@ -52,14 +52,12 @@ rule setup_db:
         gtf=config["db_dir"]+"/gene_model/gencode.v19.annotation.hs37d5_chr.gtf"
     output:
         config["db_dir"]+"/star_index/SAindex",
-        dir=config["db_dir"]+"/star_index"
+        dir=config["db_dir"]+"/star_index/"
     log:
         config["db_dir"]+"/star_index/setup_db.log/"
     threads: 8
-    conda:
-        "envs/star.yaml"
     shell:
-        "STAR "
+        bin_dir+"STAR "
         "--runMode genomeGenerate "
         "--genomeDir {output.dir} "
         "--genomeFastaFiles {input.genome} "

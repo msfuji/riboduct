@@ -1,9 +1,6 @@
 # directory where you want to install database
 db_dir: /path/to/db
 
-# set the same value to $CONDA_PREFIX
-#env_dir: /path/to/env
-
 fastq:
   sample_A:
     - fastq/run1/sample_A.R1.fastq
