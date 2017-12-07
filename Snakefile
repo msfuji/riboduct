@@ -74,6 +74,12 @@ rule setup_db:
 # read mapping
 #
 
+def comma_join(files):
+    if(isinstance(files,list)):
+        return ",".join(files)
+    else:
+        return files
+
 rule star_1_pass:
     input:
         read1=lambda wildcards: config["fastq"][wildcards.sample_id][0],
@@ -82,8 +88,8 @@ rule star_1_pass:
         "star_1_pass/{sample_id}/SJ.out.tab",
         dir="star_1_pass/{sample_id}/"
     params:
-        read1=lambda wildcards: ",".join(config["fastq"][wildcards.sample_id][0]),
-        read2=lambda wildcards: ",".join(config["fastq"][wildcards.sample_id][1]),
+        read1=lambda wildcards: comma_join(config["fastq"][wildcards.sample_id][0]),
+        read2=lambda wildcards: comma_join(config["fastq"][wildcards.sample_id][1]),
         index=config["db_dir"]+"/star_index/",
         readFilesCommand=config["readFilesCommand"]
     threads: 8
@@ -118,8 +124,8 @@ rule star_2_pass:
         "star_2_pass/{sample_id}/Aligned.sortedByCoord.out.bam",
         dir="star_2_pass/{sample_id}/"
     params:
-        read1=lambda wildcards: ",".join(config["fastq"][wildcards.sample_id][0]),
-        read2=lambda wildcards: ",".join(config["fastq"][wildcards.sample_id][1]),
+        read1=lambda wildcards: comma_join(config["fastq"][wildcards.sample_id][0]),
+        read2=lambda wildcards: comma_join(config["fastq"][wildcards.sample_id][1]),
         index=config["db_dir"]+"/star_index/",
         readFilesCommand=config["readFilesCommand"]
     threads: 8
