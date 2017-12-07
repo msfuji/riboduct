@@ -56,8 +56,10 @@ rule setup_db:
     log:
         config["db_dir"]+"/star_index/setup_db.log/"
     threads: 8
+    conda:
+        "envs/star.yaml"
     shell:
-        bin_dir+"STAR "
+        "STAR "
         "--runMode genomeGenerate "
         "--genomeDir {output.dir} "
         "--genomeFastaFiles {input.genome} "
