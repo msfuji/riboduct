@@ -42,17 +42,12 @@ source deactivate
 ```
 
 ## Usage
-
-### Starting riboduct
-Activate the conda environment by
 ```
-source activate riboduct
-```
-
-
-```
-# edit db_dir
+# edit FASTQ path
 vi config.yaml
+
+# activate the conda environment
+source activate riboduct
 
 # run
 snakemake --configfile config.yaml --config env_dir=$CONDA_PREFIX
@@ -60,6 +55,6 @@ snakemake --configfile config.yaml --config env_dir=$CONDA_PREFIX
 # snakemake --configfile config.yaml --config env_dir=$CONDA_PREFIX \
 # --cluster "qsub -pe def_slot {threads} -o {log} -e {log}" --jobs 100
 
-# Finishing riboduct
+# finish
 source deactivate
 ```
