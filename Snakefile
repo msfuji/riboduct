@@ -15,7 +15,7 @@ rule download_genome:
     output:
         config["db_dir"]+"/genome/hs37d5.fa.gz"
     log:
-        config["db_dir"]+"/genome/download_genome.log/"
+        config["db_dir"]+"/log/download_genome/"
     shell:
         "curl -O ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/reference/phase2_reference_assembly_sequence/hs37d5.fa.gz && "
         "mv hs37d5.fa.gz {output}"
@@ -26,7 +26,7 @@ rule decompress_genome:
     output:
         config["db_dir"]+"/genome/hs37d5.fa"
     log:
-        config["db_dir"]+"/genome/decompress_genome.log/"
+        config["db_dir"]+"/log/decompress_genome/"
     shell:
         "gunzip -c {input} > {output}"
 
@@ -34,7 +34,7 @@ rule download_gtf:
     output:
         config["db_dir"]+"/gene_model/gencode.v19.annotation.gtf.gz"
     log:
-        config["db_dir"]+"/gene_model/download_gtf.log/"
+        config["db_dir"]+"/log/download_gtf/"
     shell:
         "curl -O ftp://ftp.sanger.ac.uk/pub/gencode/Gencode_human/release_19/gencode.v19.annotation.gtf.gz && "
         "mv gencode.v19.annotation.gtf.gz {output}"
@@ -45,7 +45,7 @@ rule format_gtf:
     output:
         config["db_dir"]+"/gene_model/gencode.v19.annotation.hs37d5_chr.gtf"
     log:
-        config["db_dir"]+"/gene_model/format_gtf.log/"
+        config["db_dir"]+"log/format_gtf/"
     shell:
         "gunzip -c {input} | tail -n +6 | sed -e \"s/^chrM/MT/g;s/^chr//g\" > {output}"
 
@@ -57,7 +57,7 @@ rule setup_db:
         config["db_dir"]+"/star_index/SAindex",
         dir=config["db_dir"]+"/star_index/"
     log:
-        config["db_dir"]+"/star_index/setup_db.log/"
+        config["db_dir"]+"/log/setup_db/"
     threads: 8
     shell:
         bin_dir+"STAR "
@@ -92,6 +92,8 @@ rule star_1_pass:
         read2=lambda wildcards: comma_join(config["fastq"][wildcards.sample_id][1]),
         index=config["db_dir"]+"/star_index/",
         readFilesCommand=config["readFilesCommand"]
+    log:
+        "log/start_1_pass/{sample_id}/"
     threads: 8
     shell:
         bin_dir+"STAR "
@@ -128,6 +130,8 @@ rule star_2_pass:
         read2=lambda wildcards: comma_join(config["fastq"][wildcards.sample_id][1]),
         index=config["db_dir"]+"/star_index/",
         readFilesCommand=config["readFilesCommand"]
+    log:
+        "log/start_2_pass/{sample_id}/"
     threads: 8
     shell:
         bin_dir+"STAR "
@@ -168,6 +172,8 @@ rule raw_counts:
     params:
         gtf=config["db_dir"]+"/gene_model/gencode.v19.annotation.hs37d5_chr.gtf",
         strandness=2 # 2 for Illumina TruSeq
+    log:
+        "log/raw_counts/"
     threads: 16
     shell:
         bin_dir+"featureCounts "
