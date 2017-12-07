@@ -1,8 +1,8 @@
 bin_dir=config["env_dir"]+"/bin/"
 
-# rule all:
-#     input:
-#         "expression/raw_counts.gmt"
+rule all:
+    input:
+        "expression/raw_counts.gmt"
 #         "expression/fpkm.gmt"
 #         "expression/fpkm_uq.gmt"
 
@@ -67,3 +67,33 @@ rule setup_db:
         "--outFileNamePrefix {output.dir}"
 
 ################################################################################
+
+# decompress FASTQ and/or merge multiple runs if necessary.
+rule setup_fastq:
+    input:
+
+
+
+rule star_1st_pass:
+    input:
+        wildcards
+
+################################################################################
+#
+# TODO
+#
+rule raw_counts:
+    input:
+        "bam/{sample_id}.bam"
+    output:
+        "expression/raw_counts/{sample_id}.txt"
+    shell:
+        "touch {output}"
+
+rule merge_raw_counts:
+    input:
+        expand("expression/raw_counts/{sample_id}.txt", sample_id=config["fastq"])
+    output:
+        "expression/raw_counts.gmt"
+    shell:
+        "touch ${output}"

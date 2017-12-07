@@ -1,10 +1,11 @@
 # directory where you want to install database
 db_dir: /path/to/db
 
+# if you have gzipped FASTQ files, change readFilesCommand of Snakefile to "gunzip -c"
 fastq:
   sample_A:
-    - example/run1/sample_A.R1.fastq.gz
-    - example/run1/sample_A.R2.fastq.gz
+    - example/run1/sample_A.R1.fastq.bz2
+    - example/run1/sample_A.R2.fastq.bz2
   sample_B:
     - [example/run1/sample_B.R1.fastq.bz2, example/run2/sample_B.R1.fastq.bz2]
     - [example/run1/sample_B.R2.fastq.bz2, example/run2/sample_B.R2.fastq.bz2]
