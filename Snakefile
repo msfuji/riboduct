@@ -151,8 +151,8 @@ rule star_2_pass:
         read1=lambda wildcards: comma_join(config["fastq"][wildcards.sample_id][0]),
         read2=lambda wildcards: comma_join(config["fastq"][wildcards.sample_id][1]),
         index=config["db_dir"]+"/star_index/",
-        readFilesCommand=config["readFilesCommand"]
-        rg_line="@RG\tID:1\tLB:Library\tPL:Illumina\tSM:%s\tPU:Platform" % (wildcards.sample_id,)
+        readFilesCommand=config["readFilesCommand"],
+        rg_line=lambda wildcards: "@RG\tID:1\tLB:Library\tPL:Illumina\tSM:%s\tPU:Platform" % (wildcards.sample_id,)
     log:
         "log/star_2_pass/{sample_id}/"
     threads: 8
@@ -197,18 +197,43 @@ rule mark_duplicates:
 rule index_markdup_bam:
     input:
         bam="star_2_pass/{sample_id}/Aligned.sortedByCoord.out.markdup.bam"
-    output
+    output:
         bam="star_2_pass/{sample_id}/Aligned.sortedByCoord.out.markdup.bam.bai",
     log:
         "log/index_markdup_bam/"
     shell:
-        bindir+"samtools index {input}"
+        bin_dir+"samtools index {input}"
 
 ################################################################################
 #
 # QC
 #
+rule rna_seqc_sample_file:
+    input:
+        expand("star_2_pass/{sample_id}/Aligned.sortedByCoord.out.markdup.bam", sample_id=config["fastq"])
+    output:
+        "qc/rna_seqc/sample_file.txt"
+    log:
+        "log/rna_seqc_sample_file/"
+    script:
+        "scripts/make_rna_seqc_sample_file.py"
 
+rule rna_seqc:
+    input:
+        "qc/rna_seqc/sample_file.txt"
+    output:
+        dir="qc/rna_seqc/"
+    params:
+        genome=config["db_dir"]+"/genome/hs37d5.fa",
+        gtf=config["db_dir"]+"/gene_model/gencode.v19.annotation.hs37d5_chr.gtf",
+    log:
+        "log/rna_seqc/"
+    shell:
+        bin_dir+"rna-seqc "
+        "-s {input}"
+        "-t {params.gtf}"
+        "-r {params.genome}"
+        "-o {output.dir}"
 
 ################################################################################
 #
