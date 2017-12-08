@@ -239,10 +239,10 @@ rule rna_seqc:
         "log/rna_seqc/"
     shell:
         bin_dir+"rna-seqc "
-        "-s {input}"
-        "-t {params.gtf}"
-        "-r {params.genome}"
-        "-o {output.dir}"
+        "-s {input} "
+        "-t {params.gtf} "
+        "-r {params.genome} "
+        "-o {output.dir} "
 
 ################################################################################
 #
