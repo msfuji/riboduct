@@ -4,7 +4,8 @@ rule all:
     input:
         "expression/raw_counts.tsv",
         "expression/fpkm.tsv",
-        "expression/fpkm_uq.tsv"
+        "expression/fpkm_uq.tsv",
+        "qc/rna_seqc/"
 
 ################################################################################
 #
