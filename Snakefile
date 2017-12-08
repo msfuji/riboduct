@@ -159,7 +159,7 @@ rule star_2_pass:
         read2=lambda wildcards: comma_join(config["fastq"][wildcards.sample_id][1]),
         index=config["db_dir"]+"/star_index/",
         readFilesCommand=config["readFilesCommand"],
-        rg_line=lambda wildcards: "ID:1\tLB:Library\tPL:Illumina\tSM:%s\tPU:Platform" % (wildcards.sample_id,)
+        rg_line=lambda wildcards: "ID:1 LB:Library PL:Illumina SM:%s PU:Platform" % (wildcards.sample_id,)
     log:
         "log/star_2_pass/{sample_id}/"
     threads: 8
@@ -186,7 +186,7 @@ rule star_2_pass:
         "--outSAMunmapped Within "
         "--outSAMtype BAM SortedByCoordinate "
         "--outSAMheaderHD @HD VN:1.4 "
-        "--outSAMattrRGline {params.rg_line}"
+        "--outSAMattrRGline {params.rg_line} "
         "--outFileNamePrefix {output.dir} "
         "--sjdbFileChrStartEnd {input.sj} "
 
