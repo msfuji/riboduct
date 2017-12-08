@@ -2,9 +2,8 @@
 RNA-Seq pipeline.
 
 ## Installation
-### Install dependencies
-`riboduct` requires `conda` package manager and `Snakemake` workflow manager.
-To install `conda` for Linux,
+### Install conda
+`riboduct` requires `conda` package manager. To install `conda` for Linux,
 ```
 wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
 bash Miniconda3-latest-Linux-x86_64.sh
@@ -12,20 +11,6 @@ conda config --add channels r
 conda config --add channels defaults
 conda config --add channels conda-forge
 conda config --add channels bioconda
-```
-For MacOSX,
-```
-curl -O https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
-bash Miniconda3-latest-MacOSX-x86_64.sh
-conda config --add channels r
-conda config --add channels defaults
-conda config --add channels conda-forge
-conda config --add channels bioconda
-```
-
-To install `Snakemake`,
-```
-conda install -c bioconda snakemake
 ```
 
 ### Set up pipeline
