@@ -2,9 +2,9 @@ bin_dir=config["env_dir"]+"/bin/"
 
 rule all:
     input:
-        "expression/raw_counts.txt"
-#         "expression/fpkm.gmt"
-#         "expression/fpkm_uq.gmt"
+        "expression/raw_counts.gmt"
+        "expression/fpkm.gmt"
+        "expression/fpkm_uq.gmt"
 
 ################################################################################
 #
@@ -29,6 +29,28 @@ rule decompress_genome:
         config["db_dir"]+"/log/decompress_genome/"
     shell:
         "gunzip -c {input} > {output}"
+
+rule faidx_genome:
+    input:
+        config["db_dir"]+"/genome/hs37d5.fa"
+    output:
+        config["db_dir"]+"/genome/hs37d5.fa.fai"
+    log:
+        config["db_dir"]+"/log/faidx_genome/"
+    shell:
+        bin_dir+"samtools faidx {input}"
+
+rule dict_genome:
+    input:
+        config["db_dir"]+"/genome/hs37d5.fa"
+    output:
+        config["db_dir"]+"/genome/hs37d5.dict"
+    log:
+        config["db_dir"]+"/log/dict_genome/"
+    shell:
+        bin_dir+"picard CreateSequenceDictionary "
+        "R={input} "
+        "O={output}"
 
 rule download_gtf:
     output:
@@ -93,7 +115,7 @@ rule star_1_pass:
         index=config["db_dir"]+"/star_index/",
         readFilesCommand=config["readFilesCommand"]
     log:
-        "log/start_1_pass/{sample_id}/"
+        "log/star_1_pass/{sample_id}/"
     threads: 8
     shell:
         bin_dir+"STAR "
@@ -130,8 +152,9 @@ rule star_2_pass:
         read2=lambda wildcards: comma_join(config["fastq"][wildcards.sample_id][1]),
         index=config["db_dir"]+"/star_index/",
         readFilesCommand=config["readFilesCommand"]
+        rg_line="@RG\tID:1\tLB:Library\tPL:Illumina\tSM:%s\tPU:Platform" % (wildcards.sample_id,)
     log:
-        "log/start_2_pass/{sample_id}/"
+        "log/star_2_pass/{sample_id}/"
     threads: 8
     shell:
         bin_dir+"STAR "
@@ -156,6 +179,7 @@ rule star_2_pass:
         "--outSAMunmapped Within "
         "--outSAMtype BAM SortedByCoordinate "
         "--outSAMheaderHD @HD VN:1.4 "
+        "--outSAMattrRGline {params.rg_line}"
         "--outFileNamePrefix {output.dir} "
         "--sjdbFileChrStartEnd {input.sj} "
 
@@ -164,16 +188,16 @@ rule star_2_pass:
 # expression quantification
 #
 
-rule raw_counts:
+rule featureCounts:
     input:
         expand("star_2_pass/{sample_id}/Aligned.sortedByCoord.out.bam", sample_id=config["fastq"])
     output:
-        "expression/raw_counts.txt"
+        "expression/featureCounts/counts.txt"
     params:
         gtf=config["db_dir"]+"/gene_model/gencode.v19.annotation.hs37d5_chr.gtf",
         strandness=2 # 2 for Illumina TruSeq
     log:
-        "log/raw_counts/"
+        "log/featureCounts/"
     threads: 16
     shell:
         bin_dir+"featureCounts "
@@ -183,3 +207,15 @@ rule raw_counts:
         "-a {params.gtf} "
         "-o {output} "
         "{input} "
+
+rule fpkm:
+    input:
+        "expression/featureCounts/counts.txt"
+    output:
+        raw_counts="expression/raw_counts.gmt"
+        fpkm="expression/fpkm.gmt"
+        fpkm_uq="expression/fpkm_uq.gmt"
+    log:
+        "log/fpkm"
+    script:
+        "scripts/fpkm.R"

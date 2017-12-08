@@ -1,9 +1,12 @@
 name: riboduct
 channels:
+#  - r
   - bioconda
 dependencies:
   - snakemake=3.13.3
-  - fastqc=0.11.5
   - star=2.5.3a
   - rna-seqc=1.1.8
   - subread=1.6.0
+  - samtools=1.6
+  - picard=2.15.0
+#  - r=3.3.1
