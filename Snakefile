@@ -210,7 +210,9 @@ rule index_markdup_bam:
 #
 rule rna_seqc_sample_file:
     input:
-        expand("star_2_pass/{sample_id}/Aligned.sortedByCoord.out.markdup.bam", sample_id=config["fastq"])
+        expand("star_2_pass/{sample_id}/Aligned.sortedByCoord.out.markdup.bam", sample_id=config["fastq"]),
+        config["db_dir"]+"/genome/hs37d5.fa.fai",
+        config["db_dir"]+"/genome/hs37d5.dict",
     output:
         "qc/rna_seqc/sample_file.txt"
     log:
