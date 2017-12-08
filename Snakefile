@@ -11,6 +11,12 @@ rule all:
 # database construction
 #
 
+rule setup_db:
+    input:
+        config["db_dir"]+"/genome/hs37d5.fa.fai",
+        config["db_dir"]+"/genome/hs37d5.dict",
+        config["db_dir"]+"/star_index/SAindex"
+
 rule download_genome:
     output:
         config["db_dir"]+"/genome/hs37d5.fa.gz"
@@ -71,7 +77,7 @@ rule format_gtf:
     shell:
         "gunzip -c {input} | tail -n +6 | sed -e \"s/^chrM/MT/g;s/^chr//g\" > {output}"
 
-rule setup_db:
+rule star_index:
     input:
         genome=config["db_dir"]+"/genome/hs37d5.fa",
         gtf=config["db_dir"]+"/gene_model/gencode.v19.annotation.hs37d5_chr.gtf"
@@ -79,7 +85,7 @@ rule setup_db:
         config["db_dir"]+"/star_index/SAindex",
         dir=config["db_dir"]+"/star_index/"
     log:
-        config["db_dir"]+"/log/setup_db/"
+        config["db_dir"]+"/log/star_index/"
     threads: 8
     shell:
         bin_dir+"STAR "
