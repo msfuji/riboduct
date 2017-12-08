@@ -74,7 +74,7 @@ rule format_gtf:
     output:
         config["db_dir"]+"/gene_model/gencode.v19.annotation.hs37d5_chr.gtf"
     log:
-        config["db_dir"]+"log/format_gtf/"
+        config["db_dir"]+"/log/format_gtf/"
     shell:
         "gunzip -c {input} | tail -n +6 | sed -e \"s/^chrM/MT/g;s/^chr//g\" > {output}"
 

@@ -5,12 +5,9 @@ library(dplyr)
 library(data.table)
 library(readr)
 
-# args <- commandArgs(trailingOnly=T)
-# count_file <- args[1]
-# outdir <- args[2]
-
-count_file <- "../raw_counts.txt"
-outdir <- "./"
+args <- commandArgs(trailingOnly=T)
+count_file <- args[1]
+outdir <- args[2]
 
 #
 # load output of featureCounts
