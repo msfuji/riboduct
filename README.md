@@ -50,7 +50,7 @@ snakemake --configfile config.yaml --config env_dir=$CONDA_PREFIX
 
 ## run on SGE clusters.
 # snakemake --configfile config.yaml --config env_dir=$CONDA_PREFIX \
-# --cluster "qsub -pe def_slot {threads} -o {log} -e {log}" --jobs 100
+# --cluster "qsub -pe def_slot {threads} -cwd -o {log} -e {log}" --jobs 100
 
 # finish
 source deactivate
