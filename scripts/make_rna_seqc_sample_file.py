@@ -1,7 +1,7 @@
 import csv
 import os.path
 
-bams=snakemake.input[0]
+bams=snakemake.input
 
 with open(snakemake.output[0], "w") as f:
     writer=csv.writer(f, delimiter="\t")
