@@ -6,7 +6,7 @@ library(data.table)
 library(readr)
 
 # args <- commandArgs(trailingOnly=T)
-# infile <- args[1]
+# count_file <- args[1]
 # outdir <- args[2]
 
 count_file <- "../raw_counts.txt"
@@ -29,21 +29,28 @@ rownames(m) <- count$Geneid
 len <- count$Length
 
 #
-# remove genes that have no read in all samples
+# FPKM-UQ
 #
-has_read <- rowSums(m)>0
-m <- m[has_read,]
-len <- len[has_read]
+outfile <- paste0(outdir,"/raw_counts.tsv")
+data.frame(gene_id=rownames(m), m)%>% write_tsv(outfile)
 
 #
-# compute normalization factors for FPKM-UQ
+# FPKM-UQ
 #
-uq <- apply(m, 2, function(x){quantile(x,probs=0.75)})
-norm_factor <- (10**9 * (1/len) %*% t(1/uq))
+tot <- colSums(m)
+norm_factor <- (10**9 * (1/len) %*% t(1/tot)) # normalization factor
+fpkm <- m * norm_factor
+outfile <- paste0(outdir,"/fpkm.tsv")
+data.frame(gene_id=rownames(fpkm), fpkm)%>% write_tsv(outfile)
+
+#
+# FPKM-UQ
+#
+any_read <- rowSums(m)>0
+uq <- m[any_read,] %>% apply(2, function(x){quantile(x,probs=0.75)})
+norm_factor <- (10**9 * (1/len) %*% t(1/uq)) # normalization factor
 norm_factor <- norm_factor / nrow(m) # further normalize by the number of genes
-
 fpkm_uq <- m * norm_factor
-
-output.fpkm_uq <- paste0(outdir,"/fpkm_uq.tsv")
-data.frame(gene_id=rownames(fpkm_uq), fpkm_uq)%>% write_tsv(output.fpkm_uq)
+outfile <- paste0(outdir,"/fpkm_uq.tsv")
+data.frame(gene_id=rownames(fpkm_uq), fpkm_uq)%>% write_tsv(outfile)
 

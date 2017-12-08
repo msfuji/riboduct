@@ -2,8 +2,8 @@ bin_dir=config["env_dir"]+"/bin/"
 
 rule all:
     input:
-        "expression/raw_counts.tsv"
-        "expression/fpkm.tsv"
+        "expression/raw_counts.tsv",
+        "expression/fpkm.tsv",
         "expression/fpkm_uq.tsv"
 
 ################################################################################
@@ -239,8 +239,8 @@ rule calc_fpkm:
     input:
         "expression/feature_counts/counts.txt"
     output:
-    #    raw_counts="expression/raw_counts.tsv",
-    #    fpkm="expression/fpkm.tsv",
+        raw_counts="expression/raw_counts.tsv",
+        fpkm="expression/fpkm.tsv",
         fpkm_uq="expression/fpkm_uq.tsv",
         dir="expression/"
     log:
