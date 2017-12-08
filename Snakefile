@@ -2,9 +2,9 @@ bin_dir=config["env_dir"]+"/bin/"
 
 rule all:
     input:
-        "expression/raw_counts.gmt"
-        "expression/fpkm.gmt"
-        "expression/fpkm_uq.gmt"
+        "expression/raw_counts.tsv"
+        "expression/fpkm.tsv"
+        "expression/fpkm_uq.tsv"
 
 ################################################################################
 #
@@ -183,21 +183,48 @@ rule star_2_pass:
         "--outFileNamePrefix {output.dir} "
         "--sjdbFileChrStartEnd {input.sj} "
 
+rule mark_duplicates:
+    input:
+        "star_2_pass/{sample_id}/Aligned.sortedByCoord.out.bam"
+    output:
+        bam="star_2_pass/{sample_id}/Aligned.sortedByCoord.out.markdup.bam",
+        metrics="star_2_pass/{sample_id}/markdup_metrics.txt"
+    log:
+        "log/mark_duplicates/"
+    shell:
+        bin_dir+"picard MarkDuplicates I={input} O={output.bam} M={output.metrics}"
+
+rule index_markdup_bam:
+    input:
+        bam="star_2_pass/{sample_id}/Aligned.sortedByCoord.out.markdup.bam"
+    output
+        bam="star_2_pass/{sample_id}/Aligned.sortedByCoord.out.markdup.bam.bai",
+    log:
+        "log/index_markdup_bam/"
+    shell:
+        bindir+"samtools index {input}"
+
+################################################################################
+#
+# QC
+#
+
+
 ################################################################################
 #
 # expression quantification
 #
 
-rule featureCounts:
+rule feature_counts:
     input:
-        expand("star_2_pass/{sample_id}/Aligned.sortedByCoord.out.bam", sample_id=config["fastq"])
+        expand("star_2_pass/{sample_id}/Aligned.sortedByCoord.out.markdup.bam", sample_id=config["fastq"])
     output:
-        "expression/featureCounts/counts.txt"
+        "expression/feature_counts/counts.txt"
     params:
         gtf=config["db_dir"]+"/gene_model/gencode.v19.annotation.hs37d5_chr.gtf",
         strandness=2 # 2 for Illumina TruSeq
     log:
-        "log/featureCounts/"
+        "log/feature_counts/"
     threads: 16
     shell:
         bin_dir+"featureCounts "
@@ -208,14 +235,15 @@ rule featureCounts:
         "-o {output} "
         "{input} "
 
-rule fpkm:
+rule calc_fpkm:
     input:
-        "expression/featureCounts/counts.txt"
+        "expression/feature_counts/counts.txt"
     output:
-        raw_counts="expression/raw_counts.gmt"
-        fpkm="expression/fpkm.gmt"
-        fpkm_uq="expression/fpkm_uq.gmt"
+    #    raw_counts="expression/raw_counts.tsv",
+    #    fpkm="expression/fpkm.tsv",
+        fpkm_uq="expression/fpkm_uq.tsv",
+        dir="expression/"
     log:
-        "log/fpkm"
-    script:
-        "scripts/fpkm.R"
+        "log/calc_fpkm/"
+    shell:
+        bin_dir+"Rscript scripts/calc_fpkm.R {input} {output.dir}"
