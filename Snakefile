@@ -220,6 +220,7 @@ rule rna_seqc_sample_file:
         config["db_dir"]+"/genome/hs37d5.fa.fai",
         config["db_dir"]+"/genome/hs37d5.dict",
         bams=expand("star_2_pass/{sample_id}/Aligned.sortedByCoord.out.markdup.bam", sample_id=config["fastq"])
+        bais=expand("star_2_pass/{sample_id}/Aligned.sortedByCoord.out.markdup.bam.bai", sample_id=config["fastq"])
     output:
         "qc/rna_seqc/sample_file.txt"
     log:

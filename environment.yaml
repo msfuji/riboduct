@@ -13,3 +13,4 @@ dependencies:
   - r-dplyr=0.5.0
   - r-data.table=1.10.0
   - r-readr=0.2.2
+  - java-jdk=7.0.91
