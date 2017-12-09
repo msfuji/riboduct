@@ -22,8 +22,8 @@ conda env create --name riboduct --file environment.yaml
 ```
 Download RNA-SeQC.
 ```
-wget http://www.broadinstitute.org/cancer/cga/tools/rnaseqc/RNA-SeQC_v1.1.8.jar
-mv RNA-SeQC_v1.1.8.jar bin/
+mkdir bin
+wget -P bin/ http://www.broadinstitute.org/cancer/cga/tools/rnaseqc/RNA-SeQC_v1.1.8.jar
 ```
 Download reference human genome (hs37d5) and gene model (GENCODE v19).
 ```
