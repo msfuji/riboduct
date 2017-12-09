@@ -5,7 +5,7 @@ rule all:
         "expression/raw_counts.tsv",
         "expression/fpkm.tsv",
         "expression/fpkm_uq.tsv",
-        "qc/rna_seqc/"
+        "qc/rna_seqc/index.html"
 
 ################################################################################
 #
@@ -230,6 +230,7 @@ rule rna_seqc:
     input:
         "qc/rna_seqc/sample_file.txt"
     output:
+        "qc/rna_seqc/index.html",
         dir="qc/rna_seqc/"
     params:
         java7=config["env_dir"]+"/../../pkgs/java-jdk-7.0.91-1/bin/java",
