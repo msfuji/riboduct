@@ -24,7 +24,7 @@ rule download_genome:
     log:
         config["db_dir"]+"/log/download_genome/"
     shell:
-        "curl -O ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/reference/phase2_reference_assembly_sequence/hs37d5.fa.gz && "
+        "wget ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/reference/phase2_reference_assembly_sequence/hs37d5.fa.gz && "
         "mv hs37d5.fa.gz {output}"
 
 rule decompress_genome:
@@ -65,7 +65,7 @@ rule download_gtf:
     log:
         config["db_dir"]+"/log/download_gtf/"
     shell:
-        "curl -O ftp://ftp.sanger.ac.uk/pub/gencode/Gencode_human/release_19/gencode.v19.annotation.gtf.gz && "
+        "wget ftp://ftp.sanger.ac.uk/pub/gencode/Gencode_human/release_19/gencode.v19.annotation.gtf.gz && "
         "mv gencode.v19.annotation.gtf.gz {output}"
 
 rule format_gtf:
@@ -217,9 +217,7 @@ rule index_markdup_bam:
 #
 rule rna_seqc_sample_file:
     input:
-        config["db_dir"]+"/genome/hs37d5.fa.fai",
-        config["db_dir"]+"/genome/hs37d5.dict",
-        bams=expand("star_2_pass/{sample_id}/Aligned.sortedByCoord.out.markdup.bam", sample_id=config["fastq"])
+        bams=expand("star_2_pass/{sample_id}/Aligned.sortedByCoord.out.markdup.bam", sample_id=config["fastq"]),
         bais=expand("star_2_pass/{sample_id}/Aligned.sortedByCoord.out.markdup.bam.bai", sample_id=config["fastq"])
     output:
         "qc/rna_seqc/sample_file.txt"
@@ -234,12 +232,13 @@ rule rna_seqc:
     output:
         dir="qc/rna_seqc/"
     params:
+        java7=config["env_dir"]+"/../../pkgs/java-jdk-7.0.91-1/bin/java",
         genome=config["db_dir"]+"/genome/hs37d5.fa",
         gtf=config["db_dir"]+"/gene_model/gencode.v19.annotation.hs37d5_chr.gtf",
     log:
         "log/rna_seqc/"
     shell:
-        bin_dir+"rna-seqc "
+        "{params.java7} -Xmx2G -jar bin/RNA-SeQC_v1.1.8.jar "
         "-s {input} "
         "-t {params.gtf} "
         "-r {params.genome} "
