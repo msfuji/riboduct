@@ -189,7 +189,7 @@ rule star_2_pass:
         "--outSAMattrRGline {params.rg_line} "
         "--outFileNamePrefix {output.dir} "
         "--sjdbFileChrStartEnd {input.sj} "
-        "--limitSjdbInsertNsj 10000000"
+        "--limitSjdbInsertNsj 10000000 "
 
 rule mark_duplicates:
     input:
@@ -235,7 +235,7 @@ rule rna_seqc:
         dir="qc/rna_seqc/"
     params:
         java7=config["env_dir"]+"/../../pkgs/java-jdk-7.0.91-1/bin/java",
-        rna_seqc_jar=config["env_dir"]+"/share/rna-seqc-1.1.8-0/RNA-SeQC_v1.1.8.jar"
+        rna_seqc_jar=config["env_dir"]+"/share/rna-seqc-1.1.8-0/RNA-SeQC_v1.1.8.jar",
         genome=config["db_dir"]+"/genome/hs37d5.fa",
         gtf=config["db_dir"]+"/gene_model/gencode.v19.annotation.hs37d5_chr.gtf",
     log:
