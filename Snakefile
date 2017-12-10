@@ -189,7 +189,7 @@ rule star_2_pass:
         "--outSAMattrRGline {params.rg_line} "
         "--outFileNamePrefix {output.dir} "
         "--sjdbFileChrStartEnd {input.sj} "
-        "--limitSjdbInsertNsj 10000000 "
+        "--limitSjdbInsertNsj 2000000 "
 
 rule mark_duplicates:
     input:
