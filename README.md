@@ -20,11 +20,6 @@ conda config --add channels conda-forge
 conda config --add channels bioconda
 conda env create --name riboduct --file environment.yaml
 ```
-Download RNA-SeQC.
-```
-mkdir bin
-wget -P bin/ http://www.broadinstitute.org/cancer/cga/tools/rnaseqc/RNA-SeQC_v1.1.8.jar
-```
 Download reference human genome (hs37d5) and gene model (GENCODE v19).
 ```
 # edit db_dir
@@ -44,7 +39,10 @@ source deactivate
 
 ## Usage
 ```
-# edit FASTQ path
+git clone https://github.com/msfuji/riboduct.git
+cd riboduct
+
+# edit db_dir and FASTQ path
 vi config.yaml
 
 # activate the conda environment
