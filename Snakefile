@@ -262,7 +262,7 @@ rule feature_counts:
         strandness=2 # 2 for Illumina TruSeq
     log:
         "log/feature_counts/"
-    threads: 16
+    threads: 8
     shell:
         bin_dir+"featureCounts "
         "-p "
