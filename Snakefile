@@ -200,7 +200,7 @@ rule mark_duplicates:
     log:
         "log/mark_duplicates/"
     shell:
-        bin_dir+"picard -Xmx2G MarkDuplicates I={input} O={output.bam} M={output.metrics}"
+        bin_dir+"picard -Xmx5G MarkDuplicates I={input} O={output.bam} M={output.metrics}"
 
 rule index_markdup_bam:
     input:
