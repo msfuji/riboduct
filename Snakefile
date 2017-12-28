@@ -232,7 +232,7 @@ rule rna_seqc:
         "log/rna_seqc/{sample_id}/"
     shell:
         "{params.java7} -Xmx10G -jar {params.jar} "
-        "-s \"{wildcards.sample_id}\|{input.bam}\|NA\" "
+        "-s \"{wildcards.sample_id}|{input.bam}|NA\" "
         "-t {params.gtf} "
         "-r {params.genome} "
         "-o {output.dir} "
