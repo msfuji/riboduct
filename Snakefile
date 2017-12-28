@@ -216,36 +216,36 @@ rule index_markdup_bam:
 #
 # QC
 #
-rule rna_seqc_sample_file:
-    input:
-        bams=expand("star_2_pass/{sample_id}/Aligned.sortedByCoord.out.markdup.bam", sample_id=config["fastq"]),
-        bais=expand("star_2_pass/{sample_id}/Aligned.sortedByCoord.out.markdup.bam.bai", sample_id=config["fastq"])
-    output:
-        "qc/rna_seqc/sample_file.txt"
-    log:
-        "log/rna_seqc_sample_file/"
-    script:
-        "scripts/make_rna_seqc_sample_file.py"
-
 rule rna_seqc:
     input:
-        "qc/rna_seqc/sample_file.txt"
+        bam="star_2_pass/{sample_id}/Aligned.sortedByCoord.out.markdup.bam",
+        bai="star_2_pass/{sample_id}/Aligned.sortedByCoord.out.markdup.bam.bai"
     output:
-        "qc/rna_seqc/index.html",
-        dir="qc/rna_seqc/"
+        "qc/rna_seqc/{sample_id}/metrics.tsv",
+        dir="qc/rna_seqc/{sample_id}/"
     params:
         java7=config["env_dir"]+"/../../pkgs/java-jdk-7.0.91-1/bin/java",
-        rna_seqc_jar=config["env_dir"]+"/share/rna-seqc-1.1.8-0/RNA-SeQC_v1.1.8.jar",
-        genome=config["db_dir"]+"/genome/hs37d5.fa",
+        jar=config["env_dir"]+"/share/rna-seqc-1.1.8-0/RNA-SeQC_v1.1.8.jar",
         gtf=config["db_dir"]+"/gene_model/gencode.v19.annotation.hs37d5_chr.gtf",
+        genome=config["db_dir"]+"/genome/hs37d5.fa"
     log:
-        "log/rna_seqc/"
+        "log/rna_seqc/{sample_id}/"
     shell:
-        "{params.java7} -Xmx2G -jar {params.rna_seqc_jar} "
-        "-s {input} "
+        "{params.java7} -Xmx10G -jar {params.jar} "
+        "-s \"{sample_id}\|{input.bam}\|NA\" "
         "-t {params.gtf} "
         "-r {params.genome} "
         "-o {output.dir} "
+
+rule merge_rna_seqc:
+    input:
+        expand("qc/rna_seqc/{sample_id}/metrics.tsv", sample_id=config["fastq"])
+    output:
+        "qc/rna_seqc/metrics.txt"
+    log:
+        "log/merge_rna_seqc/"
+    script:
+        "scripts/merge_rna_seqc_metrics.py"
 
 ################################################################################
 #
