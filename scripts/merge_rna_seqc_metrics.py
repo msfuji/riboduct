@@ -21,7 +21,7 @@ df=df.ix[:,[
 "Intronic Rate", "Intergenic Rate", "Split Reads",
 "Expression Profiling Efficiency", "Transcripts Detected", "Genes Detected",
 "End 1 Sense", "End 1 Antisense", "End 2 Sense", "End 2 Antisense",
-"End 1 \% Sense", "End 2 \% Sense"
+"End 1 % Sense", "End 2 % Sense"
 ]]
 
-df.to_csv(snakemake.output[0], sep="\t")
+df.to_csv(snakemake.output[0], sep="\t", index=False)
