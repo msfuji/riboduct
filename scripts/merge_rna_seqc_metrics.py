@@ -22,6 +22,6 @@ df=df.ix[:,[
 "Expression Profiling Efficiency", "Transcripts Detected", "Genes Detected",
 "End 1 Sense", "End 1 Antisense", "End 2 Sense", "End 2 Antisense",
 "End 1 \% Sense", "End 2 \% Sense"
-]
+]]
 
 df.to_csv(snakemake.output[0], sep="\t")
