@@ -5,7 +5,7 @@ rule all:
         "expression/raw_counts.tsv",
         "expression/fpkm.tsv",
         "expression/fpkm_uq.tsv",
-        "qc/rna_seqc/index.html"
+        "qc/rna_seqc/metrics.txt"
 
 ################################################################################
 #
@@ -232,7 +232,7 @@ rule rna_seqc:
         "log/rna_seqc/{sample_id}/"
     shell:
         "{params.java7} -Xmx10G -jar {params.jar} "
-        "-s \"{sample_id}\|{input.bam}\|NA\" "
+        "-s \"{wildcards.sample_id}\|{input.bam}\|NA\" "
         "-t {params.gtf} "
         "-r {params.genome} "
         "-o {output.dir} "
