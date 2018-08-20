@@ -1,5 +1,5 @@
-# riboductA
-RNA-Seq pipeline. `riboduct` maps sequence reads onto reference genome, counts
+# riboductBA
+ARNA-Seq pipeline. `riboduct` maps sequence reads onto reference genome, counts
 reads on annotated transcripts, computes FPKM and FPKM-UQ. Also computes
 several metrics for quality control.
 
