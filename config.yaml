@@ -1,6 +1,7 @@
 # directory where you want to install database
 db_dir: /home/msfuji/resource/riboduct_db
 use_sge: True
+max_sge_jobs: 100
 
 #readFilesCommand: "cat" # for uncompressed FASTQ
 #readFilesCommand: "gunzip -c" # for gzipped FASTQ

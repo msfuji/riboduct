@@ -1,7 +1,8 @@
 #!bin/bash
 
-config_yaml=$1
-max_sge_jobs=100
+command=$1
+config_yaml=$2
+
 
 # install
 conda config --add channels r
