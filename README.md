@@ -1,5 +1,7 @@
 # riboduct
-RNA-Seq pipeline.
+RNA-Seq pipeline. `riboduct` maps sequence reads onto reference genome, counts
+reads on annotated transcripts, computes FPKM and FPKM-UQ. Also computes
+measures for quality control.
 
 ## Installation
 ### Install conda
