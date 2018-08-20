@@ -11,7 +11,7 @@ wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
 bash Miniconda3-latest-Linux-x86_64.sh
 ```
 
-### 2. Set up pipeline
+### 2. Install pipeline
 Download `riboduct` and set up the `conda` environment.
 ```
 git clone https://github.com/msfuji/riboduct.git
