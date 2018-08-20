@@ -1,17 +1,17 @@
-# riboductBA
-ABRNA-Seq pipeline. `riboduct` maps sequence reads onto reference genome, counts
+# riboduct
+RNA-Seq pipeline. `riboduct` maps sequence reads onto reference genome, counts
 reads on annotated transcripts, computes FPKM and FPKM-UQ. Also computes
 several metrics for quality control.
 
 ## Installation
-1. Install conda
+###1. Install conda
 `riboduct` requires `conda` package manager. To install `conda` for Linux,
 ```
 wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
 bash Miniconda3-latest-Linux-x86_64.sh
 ```
 
-1. Set up pipeline
+###2. Set up pipeline
 Download `riboduct` and set up the `conda` environment.
 ```
 git clone https://github.com/msfuji/riboduct.git
@@ -22,7 +22,7 @@ conda config --add channels conda-forge
 conda config --add channels bioconda
 conda env create --name riboduct --file environment.yaml
 ```
-1. Set up database
+###3. Set up database
 Download reference genome and gene annotation.
 ```
 #human genome (hs37d5) and gene model (GENCODE v19).
