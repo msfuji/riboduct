@@ -11,8 +11,8 @@ wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
 bash Miniconda3-latest-Linux-x86_64.sh
 ```
 
-### Set up pipeline
-1. Download `riboduct` and set up the `conda` environment.
+1. Set up pipeline
+Download `riboduct` and set up the `conda` environment.
 ```
 git clone https://github.com/msfuji/riboduct.git
 cd riboduct
@@ -22,8 +22,8 @@ conda config --add channels conda-forge
 conda config --add channels bioconda
 conda env create --name riboduct --file environment.yaml
 ```
-### Set up database
-1. Download reference genome and gene annotation.
+1. Set up database
+Download reference genome and gene annotation.
 ```
 #human genome (hs37d5) and gene model (GENCODE v19).
 wget ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/reference/phase2_reference_assembly_sequence/hs37d5.fa.gz
