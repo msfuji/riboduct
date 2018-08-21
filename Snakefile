@@ -28,7 +28,7 @@ rule link_genome:
         config["db_dir"]+"/log/link_genome/"
     run:
         import os
-        os.symlink(input[0], output[0]}
+        os.symlink(input[0], output[0])
 
 rule decompress_genome:
     input:
@@ -71,7 +71,7 @@ rule link_gtf:
         config["db_dir"]+"/log/link_gtf/"
     run:
         import os
-        os.symlink(input[0], output[0]}
+        os.symlink(input[0], output[0])
 
 rule decompress_gtf:
     input:
