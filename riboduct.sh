@@ -42,14 +42,13 @@ snake_command="snakemake --configfile $config_yaml --config env_dir=$CONDA_PREFI
 if $use_sge; then
   snake_command=`echo $snake_command --cluster \"qsub -pe def_slot {threads} -o {log} -e {log}\" --jobs $sge_jobs`
 fi
-echo $snake_command
 
 #
 # run snakemake
 #
 if [ $command = "index" ]; then
   echo "Indexing database..."
-  $snake_command setup_db
+  $snake_command index
   echo "DONE."
 elif [ $command = "run" ]; then
   echo "Running riboduct..."

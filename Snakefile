@@ -9,29 +9,32 @@ rule all:
 
 ################################################################################
 #
-# database construction
+# database indexing
 #
 
-rule setup_db:
+rule index:
     input:
-        config["db_dir"]+"/genome/hs37d5.fa.fai",
-        config["db_dir"]+"/genome/hs37d5.dict",
+        config["db_dir"]+"/genome/genome.fa.fai",
+        config["db_dir"]+"/genome/genome.dict",
         config["db_dir"]+"/star_index/SAindex"
 
-rule download_genome:
+rule link_genome:
+    input:
+        config["genome_fa_gz"]
     output:
-        config["db_dir"]+"/genome/hs37d5.fa.gz"
+        config["db_dir"]+"/genome/genome.fa.gz"
     log:
-        config["db_dir"]+"/log/download_genome/"
+        config["db_dir"]+"/log/link_genome/"
     shell:
-        "wget ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/reference/phase2_reference_assembly_sequence/hs37d5.fa.gz && "
-        "mv hs37d5.fa.gz {output}"
+        # get full path
+        "input=`echo $(cd $(dirname {input}) && pwd -P)/$(basename {input})` && "
+        "ln -sf $input {output}"
 
 rule decompress_genome:
     input:
-        config["db_dir"]+"/genome/hs37d5.fa.gz"
+        config["db_dir"]+"/genome/genome.fa.gz"
     output:
-        config["db_dir"]+"/genome/hs37d5.fa"
+        config["db_dir"]+"/genome/genome.fa"
     log:
         config["db_dir"]+"/log/decompress_genome/"
     shell:
@@ -39,9 +42,9 @@ rule decompress_genome:
 
 rule faidx_genome:
     input:
-        config["db_dir"]+"/genome/hs37d5.fa"
+        config["db_dir"]+"/genome/genome.fa"
     output:
-        config["db_dir"]+"/genome/hs37d5.fa.fai"
+        config["db_dir"]+"/genome/genome.fa.fai"
     log:
         config["db_dir"]+"/log/faidx_genome/"
     shell:
@@ -49,9 +52,9 @@ rule faidx_genome:
 
 rule dict_genome:
     input:
-        config["db_dir"]+"/genome/hs37d5.fa"
+        config["db_dir"]+"/genome/genome.fa"
     output:
-        config["db_dir"]+"/genome/hs37d5.dict"
+        config["db_dir"]+"/genome/genome.dict"
     log:
         config["db_dir"]+"/log/dict_genome/"
     shell:
@@ -59,29 +62,32 @@ rule dict_genome:
         "R={input} "
         "O={output}"
 
-rule download_gtf:
-    output:
-        config["db_dir"]+"/gene_model/gencode.v19.annotation.gtf.gz"
-    log:
-        config["db_dir"]+"/log/download_gtf/"
-    shell:
-        "wget ftp://ftp.sanger.ac.uk/pub/gencode/Gencode_human/release_19/gencode.v19.annotation.gtf.gz && "
-        "mv gencode.v19.annotation.gtf.gz {output}"
-
-rule format_gtf:
+rule link_gtf:
     input:
-        config["db_dir"]+"/gene_model/gencode.v19.annotation.gtf.gz"
+        config["annotation_gtf_gz"]
     output:
-        config["db_dir"]+"/gene_model/gencode.v19.annotation.hs37d5_chr.gtf"
+        config["db_dir"]+"/gene_model/annotation.gtf.gz"
     log:
-        config["db_dir"]+"/log/format_gtf/"
+        config["db_dir"]+"/log/link_gtf/"
     shell:
-        "gunzip -c {input} | tail -n +6 | sed -e \"s/^chrM/MT/g;s/^chr//g\" > {output}"
+        # get full path
+        "input=`echo $(cd $(dirname {input}) && pwd -P)/$(basename {input})` && "
+        "ln -sf $input {output}"
+
+rule decompress_gtf:
+    input:
+        config["db_dir"]+"/gene_model/annotation.gtf.gz"
+    output:
+        config["db_dir"]+"/gene_model/annotation.gtf"
+    log:
+        config["db_dir"]+"/log/decompress_gtf/"
+    shell:
+        "gunzip -c {input} > {output}"
 
 rule star_index:
     input:
-        genome=config["db_dir"]+"/genome/hs37d5.fa",
-        gtf=config["db_dir"]+"/gene_model/gencode.v19.annotation.hs37d5_chr.gtf"
+        genome=config["db_dir"]+"/genome/genome.fa",
+        gtf=config["db_dir"]+"/gene_model/annotation.gtf"
     output:
         config["db_dir"]+"/star_index/SAindex",
         dir=config["db_dir"]+"/star_index/"
@@ -226,8 +232,8 @@ rule rna_seqc:
     params:
         java7=config["env_dir"]+"/../../pkgs/java-jdk-7.0.91-1/bin/java",
         jar=config["env_dir"]+"/share/rna-seqc-1.1.8-0/RNA-SeQC_v1.1.8.jar",
-        gtf=config["db_dir"]+"/gene_model/gencode.v19.annotation.hs37d5_chr.gtf",
-        genome=config["db_dir"]+"/genome/hs37d5.fa"
+        gtf=config["db_dir"]+"/gene_model/annotation.gtf",
+        genome=config["db_dir"]+"/genome/genome.fa"
     log:
         "log/rna_seqc/{sample_id}/"
     shell:
@@ -258,7 +264,7 @@ rule feature_counts:
     output:
         "expression/feature_counts/counts.txt"
     params:
-        gtf=config["db_dir"]+"/gene_model/gencode.v19.annotation.hs37d5_chr.gtf",
+        gtf=config["db_dir"]+"/gene_model/annotation.gtf",
         strandness=2 # 2 for Illumina TruSeq
     log:
         "log/feature_counts/"

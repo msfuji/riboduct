@@ -34,8 +34,10 @@ wget ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_19/gencode.
 # wget ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M18/GRCm38.p6.genome.fa.gz
 # wget ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M18/gencode.vM18.annotation.gtf.gz
 ```
-Modify three parameters (`genome_fa_gz`, `annotation_gtf_gz`, `db_dir`) in
-`config.yaml` accordingly. Start indexing of database.
+Make a database directory, and modify `config.yaml` so that the `db_dir`
+parameter points to the database directory. Also modify two other parameters
+(`genome_fa_gz`, `annotation_gtf_gz`) for the downloaded files of genome and
+gene annotation. Start indexing of database.
 ```
 bash riboduct.sh index
 ```
