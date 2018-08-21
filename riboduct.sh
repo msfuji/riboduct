@@ -46,11 +46,11 @@ fi
 #
 if [ $command = "index" ]; then
   echo "Indexing database..."
-  $snake_command index
+  bash -c "$snake_command index"
   echo "DONE."
 elif [ $command = "run" ]; then
   echo "Running riboduct..."
-  $snake_command
+  bash -c "$snake_command"
   echo "DONE."
 else
   echo "[ERROR] Unknown command ", $command
