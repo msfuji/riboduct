@@ -38,7 +38,7 @@ source activate riboduct
 #
 # add SGE options for snakemake
 #
-snake_command="snakemake --configfile $config_yaml --config env_dir=$CONDA_PREFIX"
+snake_command="snakemake --config env_dir=$CONDA_PREFIX --configfile $config_yaml"
 if $use_sge; then
   snake_command=`echo $snake_command --cluster \"qsub -pe def_slot {threads} -o {log} -e {log}\" --jobs $sge_jobs`
 fi
