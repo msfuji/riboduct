@@ -4,10 +4,10 @@ import re
 gene_id_pat=re.compile("gene_id \"(\S+)\"")
 gene_name_pat=re.compile("gene_name \"(\S+)\"")
 
-with open(snakemake.output, "w") as fo:
+with open(snakemake.output[0], "w") as fo:
     writer = csv.writer(fo, delimiter="\t")
     writer.writerow(["gene_id", "gene_name"])
-    with open(snakemake.input) as fi:
+    with open(snakemake.input[0]) as fi:
         reader=csv.reader(fi, delimiter="\t")
         for row in reader:
             if row[0][0]=="#" or row[2] != "gene":
