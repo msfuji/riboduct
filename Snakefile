@@ -26,10 +26,9 @@ rule link_genome:
         config["db_dir"]+"/genome/genome.fa.gz"
     log:
         config["db_dir"]+"/log/link_genome/"
-    shell:
-        # get full path
-        "input=`echo $(cd $(dirname {input}) && pwd -P)/$(basename {input})` && "
-        "ln -sf $input {output}"
+    run:
+        import os
+        os.symlink(input[0], output[0]}
 
 rule decompress_genome:
     input:
@@ -70,10 +69,9 @@ rule link_gtf:
         config["db_dir"]+"/gene_model/annotation.gtf.gz"
     log:
         config["db_dir"]+"/log/link_gtf/"
-    shell:
-        # get full path
-        "input=`echo $(cd $(dirname {input}) && pwd -P)/$(basename {input})` && "
-        "ln -sf $input {output}"
+    run:
+        import os
+        os.symlink(input[0], output[0]}
 
 rule decompress_gtf:
     input:
