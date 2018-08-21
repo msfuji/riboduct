@@ -18,7 +18,7 @@ Download and install `riboduct`.
 ```
 git clone https://github.com/msfuji/riboduct.git
 cd riboduct
-conda activate riboduct
+conda activate
 bash riboduct.sh install
 conda deactivate
 ```
