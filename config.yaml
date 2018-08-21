@@ -1,7 +1,14 @@
+# path to gzipped ref genome
+genome_fa_gz: ./GRCh37.p13.genome.fa.gz
+
+# path to gzipped GENCODE annotation
+annotation_gtf_gz: ./gencode.v19.annotation.gtf.gz
+
 # directory where you want to install database
 db_dir: /home/msfuji/resource/riboduct_db
-use_sge: True
-max_sge_jobs: 100
+
+# if you use SGE cluster, set the maximum number of jobs
+sge_jobs: 100
 
 #readFilesCommand: "cat" # for uncompressed FASTQ
 #readFilesCommand: "gunzip -c" # for gzipped FASTQ

@@ -12,57 +12,43 @@ bash Miniconda3-latest-Linux-x86_64.sh
 ```
 
 ### 2. Install pipeline
-Download `riboduct` and set up the `conda` environment.
+Download and install `riboduct`.
 ```
 git clone https://github.com/msfuji/riboduct.git
 cd riboduct
-conda config --add channels r
-conda config --add channels defaults
-conda config --add channels conda-forge
-conda config --add channels bioconda
-conda env create --name riboduct --file environment.yaml
+bash riboduct.sh install
 ```
+
 ### 3. Set up database
-Download reference genome and gene annotation.
+First, download reference genome and gene annotation to anywhere you want.
 ```
-#human genome (hs37d5) and gene model (GENCODE v19).
-wget ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/reference/phase2_reference_assembly_sequence/hs37d5.fa.gz
+# I primarily use the human genome (GRCh37).
+wget ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_19/GRCh37.p13.genome.fa.gz
+wget ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_19/gencode.v19.annotation.gtf.gz
+
+# Alternatively, you may use the human genome GRCh38.
+# wget ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_28/GRCh38.p12.genome.fa.gz
+# wget ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_28/gencode.v28.annotation.gtf.gz
+
+# The mouse genome GRCm38 can be also used.
+# wget ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M18/GRCm38.p6.genome.fa.gz
+# wget ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M18/gencode.vM18.annotation.gtf.gz
 ```
-
+Modify three parameters (`genome_fa_gz`, `annotation_gtf_gz`, `db_dir`) in
+`config.yaml` accordingly. Start indexing of database.
 ```
-# edit db_dir
-vi config.yaml
-
-source activate riboduct
-
-# Download genome and gtf to db_dir, and index them. This may take a long time.
-snakemake --configfile config.yaml --config env_dir=$CONDA_PREFIX setup_db
-
-## Speed up indexing on SGE clusters.
-# snakemake --configfile config.yaml --config env_dir=$CONDA_PREFIX \
-# --cluster "qsub -pe def_slot {threads} -o {log} -e {log}" --jobs 2 setup_db
-
-source deactivate
+bash riboduct.sh index
 ```
 
 ## Usage
+Make a local copy of pipeline for each project.
 ```
 git clone https://github.com/msfuji/riboduct.git
 cd riboduct
-
-# edit db_dir and FASTQ path
-vi config.yaml
-
-# activate the conda environment
-source activate riboduct
-
-# run
-snakemake --configfile config.yaml --config env_dir=$CONDA_PREFIX
-
-## run on SGE clusters.
-# snakemake --configfile config.yaml --config env_dir=$CONDA_PREFIX \
-# --cluster "qsub -pe def_slot {threads} -cwd -o {log} -e {log}" --jobs 100
-
-# finish
-source deactivate
+```
+Modify `config.yaml`. First, add path of FASTQ files you want to analyze.
+Also modify `db_dir` to point the directory where you installed database.
+When finished, start running the pipeline.
+```
+bash riboduct.sh run config.yaml
 ```
