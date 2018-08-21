@@ -9,8 +9,8 @@ several metrics for quality control.
 ```
 wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
 bash Miniconda3-latest-Linux-x86_64.sh
+echo ". ${HOME}/miniconda3/etc/profile.d/conda.sh" >> ~/.bashrc
 source ~/.bashrc
-conda update conda
 ```
 
 ### 2. Install pipeline
@@ -41,7 +41,9 @@ parameter points to the database directory. Also modify two other parameters
 (`genome_fa_gz`, `annotation_gtf_gz`) for the downloaded files of genome and
 gene annotation. Start indexing of database.
 ```
+conda activate riboduct
 bash riboduct.sh index config.yaml
+conda deactivate
 ```
 
 ## Usage
@@ -54,5 +56,7 @@ Modify `config.yaml`. First, add path of FASTQ files you want to analyze.
 Also modify `db_dir` to point the directory where you installed database.
 When finished, start running the pipeline.
 ```
+conda activate riboduct
 bash riboduct.sh run config.yaml
+conda deactivate
 ```

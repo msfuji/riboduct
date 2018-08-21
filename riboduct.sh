@@ -34,11 +34,6 @@ else
 fi
 
 #
-# activate conda
-#
-conda activate riboduct
-
-#
 # add SGE options for snakemake
 #
 snake_command="snakemake --config env_dir=$CONDA_PREFIX --configfile $config_yaml"
@@ -60,8 +55,3 @@ elif [ $command = "run" ]; then
 else
   echo "[ERROR] Unknown command ", $command
 fi
-
-#
-# deactivate conda
-#
-conda deactivate
