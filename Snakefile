@@ -2,9 +2,9 @@ bin_dir=config["env_dir"]+"/bin/"
 
 rule all:
     input:
-        "expression/raw_counts.tsv",
-        "expression/fpkm.tsv",
-        "expression/fpkm_uq.tsv",
+        "expression/raw_counts.gct",
+        "expression/fpkm.gct",
+        "expression/fpkm_uq.gct",
         "qc/rna_seqc/metrics.txt"
 
 ################################################################################
@@ -17,7 +17,7 @@ rule index:
         config["db_dir"]+"/genome/genome.fa.fai",
         config["db_dir"]+"/genome/genome.dict",
         config["db_dir"]+"/star_index/SAindex",
-        config["db_dir"]+"/gene_model/gene_name.tsv"
+        config["db_dir"]+"/gene_model/gene_name.txt"
 
 rule link_genome:
     input:
@@ -109,7 +109,7 @@ rule extract_gene_name:
     input:
         config["db_dir"]+"/gene_model/annotation.gtf"
     output:
-        config["db_dir"]+"/gene_model/gene_name.tsv"
+        config["db_dir"]+"/gene_model/gene_name.txt"
     log:
         config["db_dir"]+"/log/extract_gene_name/"
     script:
@@ -293,11 +293,11 @@ rule feature_counts:
 rule calc_fpkm:
     input:
         count="expression/feature_counts/counts.txt",
-        name=config["db_dir"]+"/gene_model/gene_name.tsv"
+        name=config["db_dir"]+"/gene_model/gene_name.txt"
     output:
-        raw_counts="expression/raw_counts.tsv",
-        fpkm="expression/fpkm.tsv",
-        fpkm_uq="expression/fpkm_uq.tsv",
+        raw_counts="expression/raw_counts.gct",
+        fpkm="expression/fpkm.gct",
+        fpkm_uq="expression/fpkm_uq.gct",
         dir="expression/"
     log:
         "log/calc_fpkm/"

@@ -46,7 +46,7 @@ len <- count$Length
 #
 # raw counts
 #
-outfile <- paste0(outdir,"/raw_counts.tsv")
+outfile <- paste0(outdir,"/raw_counts.gct")
 data.frame(gene_id=rownames(m), m)%>% write_gct(name, outfile)
 
 #
@@ -55,7 +55,7 @@ data.frame(gene_id=rownames(m), m)%>% write_gct(name, outfile)
 tot <- colSums(m)
 norm_factor <- (10**9 * (1/len) %*% t(1/tot)) # normalization factor
 fpkm <- m * norm_factor
-outfile <- paste0(outdir,"/fpkm.tsv")
+outfile <- paste0(outdir,"/fpkm.gct")
 data.frame(gene_id=rownames(fpkm), fpkm)%>% write_gct(name, outfile)
 
 #
@@ -66,5 +66,5 @@ uq <- m[any_read,] %>% apply(2, function(x){quantile(x,probs=0.75)})
 norm_factor <- (10**9 * (1/len) %*% t(1/uq)) # normalization factor
 norm_factor <- norm_factor / nrow(m) # further normalize by the number of genes
 fpkm_uq <- m * norm_factor
-outfile <- paste0(outdir,"/fpkm_uq.tsv")
+outfile <- paste0(outdir,"/fpkm_uq.gct")
 data.frame(gene_id=rownames(fpkm_uq), fpkm_uq)%>% write_gct(name, outfile)
