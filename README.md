@@ -18,7 +18,9 @@ Download and install `riboduct`.
 ```
 git clone https://github.com/msfuji/riboduct.git
 cd riboduct
+conda activate riboduct
 bash riboduct.sh install
+conda deactivate
 ```
 
 ### 3. Set up database
