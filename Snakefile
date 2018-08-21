@@ -16,7 +16,8 @@ rule index:
     input:
         config["db_dir"]+"/genome/genome.fa.fai",
         config["db_dir"]+"/genome/genome.dict",
-        config["db_dir"]+"/star_index/SAindex"
+        config["db_dir"]+"/star_index/SAindex",
+        config["db_dir"]+"/gene_model/gene_name.tsv"
 
 rule link_genome:
     input:
@@ -103,6 +104,17 @@ rule star_index:
         "--sjdbGTFfile {input.gtf} "
         "--runThreadN {threads} "
         "--outFileNamePrefix {output.dir} "
+
+rule extract_gene_name:
+    input:
+        config["db_dir"]+"/gene_model/annotation.gtf"
+    output:
+        config["db_dir"]+"/gene_model/gene_name.tsv"
+    log:
+        config["db_dir"]+"/log/extract_gene_name/"
+    script:
+        "scripts/extract_gene_name_from_gtf.py"
+
 
 ################################################################################
 #
@@ -280,7 +292,8 @@ rule feature_counts:
 
 rule calc_fpkm:
     input:
-        "expression/feature_counts/counts.txt"
+        count="expression/feature_counts/counts.txt",
+        name=config["db_dir"]+"/gene_model/gene_name.tsv"
     output:
         raw_counts="expression/raw_counts.tsv",
         fpkm="expression/fpkm.tsv",
@@ -289,4 +302,4 @@ rule calc_fpkm:
     log:
         "log/calc_fpkm/"
     shell:
-        bin_dir+"Rscript scripts/calc_fpkm.R {input} {output.dir}"
+        bin_dir+"Rscript scripts/calc_fpkm.R {input.count} {input.name} {output.dir}"

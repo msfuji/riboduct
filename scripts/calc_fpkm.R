@@ -7,12 +7,30 @@ library(readr)
 
 args <- commandArgs(trailingOnly=T)
 count_file <- args[1]
-outdir <- args[2]
+name_file <- args[2]
+outdir <- args[3]
+
+# function for saving the expression levels in the GCT format
+write_gct <- function(df, name, outfile) {
+  df <- name %>%
+    select(gene_name, gene_id) %>%
+    inner_join(df) %>%
+    rename(Name=gene_name, Description=gene_id)
+
+    "#1.2\n" %>% cat(file=outfile)
+    sprintf("%d\t%d\n", nrow(df), ncol(df)-2) %>% cat(file=outfile, append=T)
+    df %>% write_tsv(outfile, append=T, col_names=T)
+}
 
 #
 # load output of featureCounts
 #
 count <- fread(count_file, skip=1)
+
+#
+# load the mapping table between gene_id and gene_name
+#
+name <- fread(name_file)
 
 #
 # make a matrix of raw counts
@@ -26,19 +44,19 @@ rownames(m) <- count$Geneid
 len <- count$Length
 
 #
-# FPKM-UQ
+# raw counts
 #
 outfile <- paste0(outdir,"/raw_counts.tsv")
-data.frame(gene_id=rownames(m), m)%>% write_tsv(outfile)
+data.frame(gene_id=rownames(m), m)%>% write_gct(name, outfile)
 
 #
-# FPKM-UQ
+# FPKM
 #
 tot <- colSums(m)
 norm_factor <- (10**9 * (1/len) %*% t(1/tot)) # normalization factor
 fpkm <- m * norm_factor
 outfile <- paste0(outdir,"/fpkm.tsv")
-data.frame(gene_id=rownames(fpkm), fpkm)%>% write_tsv(outfile)
+data.frame(gene_id=rownames(fpkm), fpkm)%>% write_gct(name, outfile)
 
 #
 # FPKM-UQ
@@ -49,5 +67,4 @@ norm_factor <- (10**9 * (1/len) %*% t(1/uq)) # normalization factor
 norm_factor <- norm_factor / nrow(m) # further normalize by the number of genes
 fpkm_uq <- m * norm_factor
 outfile <- paste0(outdir,"/fpkm_uq.tsv")
-data.frame(gene_id=rownames(fpkm_uq), fpkm_uq)%>% write_tsv(outfile)
-
+data.frame(gene_id=rownames(fpkm_uq), fpkm_uq)%>% write_gct(name, outfile)
