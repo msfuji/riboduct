@@ -36,7 +36,7 @@ fi
 #
 # activate conda
 #
-source activate riboduct
+conda activate riboduct
 
 #
 # add SGE options for snakemake
@@ -64,4 +64,4 @@ fi
 #
 # deactivate conda
 #
-source deactivate
+conda deactivate
