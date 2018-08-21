@@ -40,7 +40,7 @@ parameter points to the database directory. Also modify two other parameters
 (`genome_fa_gz`, `annotation_gtf_gz`) for the downloaded files of genome and
 gene annotation. Start indexing of database.
 ```
-bash riboduct.sh index
+bash riboduct.sh index config.yaml
 ```
 
 ## Usage

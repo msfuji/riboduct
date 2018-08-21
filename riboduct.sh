@@ -15,6 +15,9 @@ if [ $command = "install" ]; then
   conda env create --name riboduct --file environment.yaml
   echo "DONE."
   exit 0
+elif [ -z $config_yaml ]; then
+  echo "[ERROR] config.yaml not specified."
+  exit 1
 fi
 
 #
