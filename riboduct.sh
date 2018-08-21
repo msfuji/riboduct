@@ -1,4 +1,4 @@
-#!bin/bash
+#!/bin/bash
 
 command=$1
 config_yaml=$2
