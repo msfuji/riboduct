@@ -17,7 +17,8 @@ rule index:
         config["db_dir"]+"/genome/genome.fa.fai",
         config["db_dir"]+"/genome/genome.dict",
         config["db_dir"]+"/star_index/SAindex",
-        config["db_dir"]+"/gene_model/gene_name.txt"
+        config["db_dir"]+"/gene_model/gene_name.txt",
+        config["db_dir"]+"/gene_model/annotation.exon.gtf"        
 
 rule link_genome:
     input:
