@@ -83,6 +83,16 @@ rule decompress_gtf:
     shell:
         "gunzip -c {input} > {output}"
 
+rule exon_gtf:
+    input:
+        config["db_dir"]+"/gene_model/annotation.gtf"
+    output:
+        config["db_dir"]+"/gene_model/annotation.exon.gtf"
+    log:
+        config["db_dir"]+"/log/exon_gtf/"
+    shell:
+        "awk '$3==\"exon\"' {input} > {output}"
+
 rule star_index:
     input:
         genome=config["db_dir"]+"/genome/genome.fa",
@@ -242,7 +252,7 @@ rule rna_seqc:
     params:
         java7=config["env_dir"]+"/../../pkgs/java-jdk-7.0.91-1/bin/java",
         jar=config["env_dir"]+"/share/rna-seqc-1.1.8-0/RNA-SeQC_v1.1.8.jar",
-        gtf=config["db_dir"]+"/gene_model/annotation.gtf",
+        gtf=config["db_dir"]+"/gene_model/annotation.exon.gtf",
         genome=config["db_dir"]+"/genome/genome.fa"
     log:
         "log/rna_seqc/{sample_id}/"
