@@ -18,7 +18,7 @@ rule index:
         config["db_dir"]+"/genome/genome.dict",
         config["db_dir"]+"/star_index/SAindex",
         config["db_dir"]+"/gene_model/gene_name.txt",
-        config["db_dir"]+"/gene_model/annotation.exon.gtf"        
+        config["db_dir"]+"/gene_model/annotation.exon.gtf"
 
 rule link_genome:
     input:
@@ -27,6 +27,8 @@ rule link_genome:
         config["db_dir"]+"/genome/genome.fa.gz"
     log:
         config["db_dir"]+"/log/link_genome/"
+    params:
+        memory="5.3G"
     run:
         import os
         os.symlink(input[0], output[0])
@@ -38,6 +40,8 @@ rule decompress_genome:
         config["db_dir"]+"/genome/genome.fa"
     log:
         config["db_dir"]+"/log/decompress_genome/"
+    params:
+        memory="5.3G"
     shell:
         "gunzip -c {input} > {output}"
 
@@ -48,6 +52,8 @@ rule faidx_genome:
         config["db_dir"]+"/genome/genome.fa.fai"
     log:
         config["db_dir"]+"/log/faidx_genome/"
+    params:
+        memory="5.3G"
     shell:
         bin_dir+"samtools faidx {input}"
 
@@ -58,6 +64,8 @@ rule dict_genome:
         config["db_dir"]+"/genome/genome.dict"
     log:
         config["db_dir"]+"/log/dict_genome/"
+    params:
+        memory="5.3G"
     shell:
         bin_dir+"picard CreateSequenceDictionary "
         "R={input} "
@@ -70,6 +78,8 @@ rule link_gtf:
         config["db_dir"]+"/gene_model/annotation.gtf.gz"
     log:
         config["db_dir"]+"/log/link_gtf/"
+    params:
+        memory="5.3G"
     run:
         import os
         os.symlink(input[0], output[0])
@@ -81,6 +91,8 @@ rule decompress_gtf:
         config["db_dir"]+"/gene_model/annotation.gtf"
     log:
         config["db_dir"]+"/log/decompress_gtf/"
+    params:
+        memory="5.3G"
     shell:
         "gunzip -c {input} > {output}"
 
@@ -91,6 +103,8 @@ rule exon_gtf:
         config["db_dir"]+"/gene_model/annotation.exon.gtf"
     log:
         config["db_dir"]+"/log/exon_gtf/"
+    params:
+        memory="5.3G"
     shell:
         "awk '$3==\"exon\"' {input} > {output}"
 
@@ -104,6 +118,8 @@ rule star_index:
     log:
         config["db_dir"]+"/log/star_index/"
     threads: 8
+    params:
+        memory="5.3G"
     shell:
         bin_dir+"STAR "
         "--runMode genomeGenerate "
@@ -121,6 +137,8 @@ rule extract_gene_name:
         config["db_dir"]+"/gene_model/gene_name.txt"
     log:
         config["db_dir"]+"/log/extract_gene_name/"
+    params:
+        memory="5.3G"
     script:
         "scripts/extract_gene_name_from_gtf.py"
 
@@ -147,7 +165,8 @@ rule star_1_pass:
         read1=lambda wildcards: comma_join(config["fastq"][wildcards.sample_id][0]),
         read2=lambda wildcards: comma_join(config["fastq"][wildcards.sample_id][1]),
         index=config["db_dir"]+"/star_index/",
-        readFilesCommand=config["readFilesCommand"]
+        readFilesCommand=config["readFilesCommand"],
+        memory="5.3G"
     log:
         "log/star_1_pass/{sample_id}/"
     threads: 8
@@ -186,7 +205,8 @@ rule star_2_pass:
         read2=lambda wildcards: comma_join(config["fastq"][wildcards.sample_id][1]),
         index=config["db_dir"]+"/star_index/",
         readFilesCommand=config["readFilesCommand"],
-        rg_line=lambda wildcards: "ID:1 LB:Library PL:Illumina SM:%s PU:Platform" % (wildcards.sample_id,)
+        rg_line=lambda wildcards: "ID:1 LB:Library PL:Illumina SM:%s PU:Platform" % (wildcards.sample_id,),
+        memory="5.3G"
     log:
         "log/star_2_pass/{sample_id}/"
     threads: 8
@@ -226,6 +246,8 @@ rule mark_duplicates:
         metrics="star_2_pass/{sample_id}/markdup_metrics.txt"
     log:
         "log/mark_duplicates/"
+    params:
+        memory="5.3G"
     shell:
         bin_dir+"picard -Xmx5G MarkDuplicates I={input} O={output.bam} M={output.metrics}"
 
@@ -236,6 +258,8 @@ rule index_markdup_bam:
         bam="star_2_pass/{sample_id}/Aligned.sortedByCoord.out.markdup.bam.bai",
     log:
         "log/index_markdup_bam/"
+    params:
+        memory="5.3G"
     shell:
         bin_dir+"samtools index {input}"
 
@@ -254,7 +278,8 @@ rule rna_seqc:
         java7=config["env_dir"]+"/../../pkgs/java-jdk-7.0.91-1/bin/java",
         jar=config["env_dir"]+"/share/rna-seqc-1.1.8-0/RNA-SeQC_v1.1.8.jar",
         gtf=config["db_dir"]+"/gene_model/annotation.exon.gtf",
-        genome=config["db_dir"]+"/genome/genome.fa"
+        genome=config["db_dir"]+"/genome/genome.fa",
+        memory="5.3G"
     log:
         "log/rna_seqc/{sample_id}/"
     shell:
@@ -271,6 +296,8 @@ rule merge_rna_seqc:
         "qc/rna_seqc/metrics.txt"
     log:
         "log/merge_rna_seqc/"
+    params:
+        memory="5.3G"
     script:
         "scripts/merge_rna_seqc_metrics.py"
 
@@ -286,10 +313,11 @@ rule feature_counts:
         "expression/feature_counts/counts.txt"
     params:
         gtf=config["db_dir"]+"/gene_model/annotation.gtf",
-        strandness=2 # 2 for Illumina TruSeq
+        strandness=2,  # 2 for Illumina TruSeq
+        memory="10.6G"
     log:
         "log/feature_counts/"
-    threads: 8
+    threads: 4
     shell:
         bin_dir+"featureCounts "
         "-p "
@@ -310,5 +338,7 @@ rule calc_fpkm:
         dir="expression/"
     log:
         "log/calc_fpkm/"
+    params:
+        memory="5.3G"
     shell:
         bin_dir+"Rscript scripts/calc_fpkm.R {input.count} {input.name} {output.dir}"
