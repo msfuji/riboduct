@@ -206,10 +206,10 @@ rule star_2_pass:
         index=config["db_dir"]+"/star_index/",
         readFilesCommand=config["readFilesCommand"],
         rg_line=lambda wildcards: "ID:1 LB:Library PL:Illumina SM:%s PU:Platform" % (wildcards.sample_id,),
-        memory="5.3G"
+        memory="10.6G"
     log:
         "log/star_2_pass/{sample_id}/"
-    threads: 8
+    threads: 4
     shell:
         bin_dir+"STAR "
         "--genomeDir {params.index} "
@@ -314,10 +314,10 @@ rule feature_counts:
     params:
         gtf=config["db_dir"]+"/gene_model/annotation.gtf",
         strandness=2,  # 2 for Illumina TruSeq
-        memory="10.6G"
+        memory="5.3G"
     log:
         "log/feature_counts/"
-    threads: 4
+    threads: 8
     shell:
         bin_dir+"featureCounts "
         "-p "
