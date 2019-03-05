@@ -277,7 +277,7 @@ rule rna_seqc:
     params:
         java7=config["env_dir"]+"/../../pkgs/java-jdk-7.0.91-1/bin/java",
         jar=config["env_dir"]+"/share/rna-seqc-1.1.8-0/RNA-SeQC_v1.1.8.jar",
-        gtf=config["db_dir"]+"/gene_model/annotation.exon.gtf",
+        gtf=config["db_dir"]+"/gene_model/annotation.gtf",
         genome=config["db_dir"]+"/genome/genome.fa",
         memory="5.3G"
     log:
