@@ -23,9 +23,9 @@ write_gct <- function(df, name, outfile) {
 }
 
 #
-# load output of featureCounts
+# load read counts
 #
-count <- fread(count_file, skip=1)
+count <- fread(count_file)
 
 #
 # load the mapping table between gene_id and gene_name
@@ -36,8 +36,8 @@ name <- fread(name_file)
 # make a matrix of raw counts
 #
 end <- ncol(count)
-m <- count[,7:end] %>% as.matrix
-colnames(m) <- count[,7:end] %>% colnames %>% dirname %>% basename
+m <- count[,3:end] %>% as.matrix
+colnames(m) <- count[,3:end] %>% colnames
 rownames(m) <- count$Geneid
 
 # gene length

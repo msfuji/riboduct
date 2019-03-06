@@ -305,39 +305,18 @@ rule merge_rna_seqc:
 #
 # expression quantification
 #
-
 rule feature_counts:
     input:
-        expand("star_2_pass/{sample_id}/Aligned.sortedByCoord.out.markdup.bam", sample_id=config["fastq"])
+        "star_2_pass/{sample_id}/Aligned.sortedByCoord.out.markdup.bam"
     output:
-        "expression/feature_counts/counts.txt"
+        "expression/feature_counts/{sample_id}/counts.txt"
     params:
         gtf=config["db_dir"]+"/gene_model/annotation.gtf",
         strandness=2,  # 2 for Illumina TruSeq
         memory="5.3G"
     log:
-        "log/feature_counts/"
-    shell:
-        bin_dir+"featureCounts "
-        "-p "
-        "-s {params.strandness} "
-        "-a {params.gtf} "
-        "-o {output} "
-        "{input} "
-
-
-rule merge_counts:
-    input:
-        expand("star_2_pass/{sample_id}/Aligned.sortedByCoord.out.markdup.bam", sample_id=config["fastq"])
-    output:
-        "expression/feature_counts/counts.txt"
-    params:
-        gtf=config["db_dir"]+"/gene_model/annotation.gtf",
-        strandness=2,  # 2 for Illumina TruSeq
-        memory="5.3G"
-    log:
-        "log/feature_counts/"
-    threads: 8
+        "log/feature_counts/{sample_id}/"
+    threads: 1
     shell:
         bin_dir+"featureCounts "
         "-p "
@@ -345,7 +324,19 @@ rule merge_counts:
         "-s {params.strandness} "
         "-a {params.gtf} "
         "-o {output} "
-        "{input} "
+        "{input}"
+
+rule merge_feature_counts:
+    input:
+        expand("expression/feature_counts/{sample_id}/counts.txt", sample_id=config["fastq"])
+    output:
+        "expression/feature_counts/counts.txt"
+    params:
+        memory="5.3G"
+    log:
+        "log/merge_feature_counts/"
+    shell:
+        bin_dir+"Rscript scripts/merge_feature_counts.R {output} {input}"
 
 rule calc_fpkm:
     input:
