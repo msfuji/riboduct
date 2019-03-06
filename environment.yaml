@@ -5,7 +5,7 @@ channels:
 dependencies:
   - snakemake=3.13.3
   - star=2.5.3a
-  - subread=1.6.0
+  - subread=1.6.2
   - samtools=1.6
   - picard=2.14.1
   - rna-seqc=1.1.8

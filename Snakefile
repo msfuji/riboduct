@@ -317,6 +317,26 @@ rule feature_counts:
         memory="5.3G"
     log:
         "log/feature_counts/"
+    shell:
+        bin_dir+"featureCounts "
+        "-p "
+        "-s {params.strandness} "
+        "-a {params.gtf} "
+        "-o {output} "
+        "{input} "
+
+
+rule merge_counts:
+    input:
+        expand("star_2_pass/{sample_id}/Aligned.sortedByCoord.out.markdup.bam", sample_id=config["fastq"])
+    output:
+        "expression/feature_counts/counts.txt"
+    params:
+        gtf=config["db_dir"]+"/gene_model/annotation.gtf",
+        strandness=2,  # 2 for Illumina TruSeq
+        memory="5.3G"
+    log:
+        "log/feature_counts/"
     threads: 8
     shell:
         bin_dir+"featureCounts "
