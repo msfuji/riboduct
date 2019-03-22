@@ -3,6 +3,8 @@ RNA-Seq pipeline. `riboduct` maps sequence reads onto reference genome, counts
 reads on annotated transcripts, computes FPKM and FPKM-UQ. Also computes
 several metrics for quality control.
 
+![flowchart](misc/riboduct_flowchart.png)
+
 ## Installation
 ### 1. Install conda
 `riboduct` requires `conda` package manager. To install `conda` for Linux,
