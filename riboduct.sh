@@ -38,7 +38,7 @@ fi
 #
 snake_command="snakemake --config env_dir=$CONDA_PREFIX --configfile $config_yaml"
 if $use_sge; then
-  snake_command=`echo $snake_command --cluster \"qsub -cwd -pe def_slot {threads} -l s_vmem={params.memory},mem_req={params.memory} -o {log} -e {log}\" --jobs $sge_jobs`
+  snake_command=`echo $snake_command --cluster \"qsub -l os7 -cwd -pe def_slot {threads} -l s_vmem={params.memory},mem_req={params.memory} -o {log} -e {log}\" --jobs $sge_jobs`
 fi
 
 #

@@ -113,22 +113,22 @@ rule star_index:
         genome=config["db_dir"]+"/genome/genome.fa",
         gtf=config["db_dir"]+"/gene_model/annotation.gtf"
     output:
-        config["db_dir"]+"/star_index/SAindex",
-        dir=config["db_dir"]+"/star_index/"
+        config["db_dir"]+"/star_index/SAindex"
     log:
         config["db_dir"]+"/log/star_index/"
     threads: 8
     params:
-        memory="5.3G"
+        memory="5.3G",
+        outdir=config["db_dir"]+"/star_index/"
     shell:
         bin_dir+"STAR "
         "--runMode genomeGenerate "
-        "--genomeDir {output.dir} "
+        "--genomeDir {params.outdir} "
         "--genomeFastaFiles {input.genome} "
         "--sjdbOverhang 100 "
         "--sjdbGTFfile {input.gtf} "
         "--runThreadN {threads} "
-        "--outFileNamePrefix {output.dir} "
+        "--outFileNamePrefix {params.outdir} "
 
 rule extract_gene_name:
     input:
@@ -159,14 +159,14 @@ rule star_1_pass:
         read1=lambda wildcards: config["fastq"][wildcards.sample_id][0],
         read2=lambda wildcards: config["fastq"][wildcards.sample_id][1],
     output:
-        "star_1_pass/{sample_id}/SJ.out.tab",
-        dir="star_1_pass/{sample_id}/"
+        "star_1_pass/{sample_id}/SJ.out.tab"
     params:
         read1=lambda wildcards: comma_join(config["fastq"][wildcards.sample_id][0]),
         read2=lambda wildcards: comma_join(config["fastq"][wildcards.sample_id][1]),
         index=config["db_dir"]+"/star_index/",
         readFilesCommand=config["readFilesCommand"],
-        memory="5.3G"
+        memory="5.3G",
+        outdir="star_1_pass/{sample_id}/"
     log:
         "log/star_1_pass/{sample_id}/"
     threads: 8
@@ -190,7 +190,7 @@ rule star_1_pass:
         "--outSAMstrandField intronMotif "
         "--outSAMtype None "
         "--outSAMmode None "
-        "--outFileNamePrefix {output.dir} "
+        "--outFileNamePrefix {params.outdir} "
 
 rule star_2_pass:
     input:
@@ -198,15 +198,15 @@ rule star_2_pass:
         read2=lambda wildcards: config["fastq"][wildcards.sample_id][1],
         sj=expand("star_1_pass/{sample_id}/SJ.out.tab", sample_id=config["fastq"]),
     output:
-        "star_2_pass/{sample_id}/Aligned.sortedByCoord.out.bam",
-        dir="star_2_pass/{sample_id}/"
+        "star_2_pass/{sample_id}/Aligned.sortedByCoord.out.bam"
     params:
         read1=lambda wildcards: comma_join(config["fastq"][wildcards.sample_id][0]),
         read2=lambda wildcards: comma_join(config["fastq"][wildcards.sample_id][1]),
         index=config["db_dir"]+"/star_index/",
         readFilesCommand=config["readFilesCommand"],
         rg_line=lambda wildcards: "ID:1 LB:Library PL:Illumina SM:%s PU:Platform" % (wildcards.sample_id,),
-        memory="10.6G"
+        memory="10.6G",
+        outdir="star_2_pass/{sample_id}/"
     log:
         "log/star_2_pass/{sample_id}/"
     threads: 4
@@ -234,7 +234,7 @@ rule star_2_pass:
         "--outSAMtype BAM SortedByCoordinate "
         "--outSAMheaderHD @HD VN:1.4 "
         "--outSAMattrRGline {params.rg_line} "
-        "--outFileNamePrefix {output.dir} "
+        "--outFileNamePrefix {params.outdir} "
         "--sjdbFileChrStartEnd {input.sj} "
         "--limitSjdbInsertNsj 2000000 "
 
@@ -245,11 +245,11 @@ rule mark_duplicates:
         bam="star_2_pass/{sample_id}/Aligned.sortedByCoord.out.markdup.bam",
         metrics="star_2_pass/{sample_id}/markdup_metrics.txt"
     log:
-        "log/mark_duplicates/"
+        "log/mark_duplicates/{sample_id}/"
     params:
-        memory="5.3G"
+        memory="16G"
     shell:
-        bin_dir+"picard -Xmx5G MarkDuplicates I={input} O={output.bam} M={output.metrics}"
+        bin_dir+"picard -Xmx8G MarkDuplicates I={input} O={output.bam} M={output.metrics}"
 
 rule index_markdup_bam:
     input:
@@ -257,7 +257,7 @@ rule index_markdup_bam:
     output:
         bam="star_2_pass/{sample_id}/Aligned.sortedByCoord.out.markdup.bam.bai",
     log:
-        "log/index_markdup_bam/"
+        "log/index_markdup_bam/{sample_id}/"
     params:
         memory="5.3G"
     shell:
@@ -272,14 +272,14 @@ rule rna_seqc:
         bam="star_2_pass/{sample_id}/Aligned.sortedByCoord.out.markdup.bam",
         bai="star_2_pass/{sample_id}/Aligned.sortedByCoord.out.markdup.bam.bai"
     output:
-        "qc/rna_seqc/{sample_id}/metrics.tsv",
-        dir="qc/rna_seqc/{sample_id}/"
+        "qc/rna_seqc/{sample_id}/metrics.tsv"
     params:
         java7=config["env_dir"]+"/../../pkgs/java-jdk-7.0.91-1/bin/java",
         jar=config["env_dir"]+"/share/rna-seqc-1.1.8-0/RNA-SeQC_v1.1.8.jar",
         gtf=config["db_dir"]+"/gene_model/annotation.gtf",
         genome=config["db_dir"]+"/genome/genome.fa",
-        memory="5.3G"
+        memory="5.3G",
+        outdir="qc/rna_seqc/{sample_id}/"
     log:
         "log/rna_seqc/{sample_id}/"
     shell:
@@ -287,7 +287,7 @@ rule rna_seqc:
         "-s \"{wildcards.sample_id}|{input.bam}|NA\" "
         "-t {params.gtf} "
         "-r {params.genome} "
-        "-o {output.dir} "
+        "-o {params.outdir} "
 
 rule merge_rna_seqc:
     input:
@@ -345,11 +345,11 @@ rule calc_fpkm:
     output:
         raw_counts="expression/raw_counts.gct",
         fpkm="expression/fpkm.gct",
-        fpkm_uq="expression/fpkm_uq.gct",
-        dir="expression/"
+        fpkm_uq="expression/fpkm_uq.gct"
     log:
         "log/calc_fpkm/"
     params:
-        memory="5.3G"
+        memory="5.3G",
+        outdir="expression/"
     shell:
-        bin_dir+"Rscript scripts/calc_fpkm.R {input.count} {input.name} {output.dir}"
+        bin_dir+"Rscript scripts/calc_fpkm.R {input.count} {input.name} {params.outdir}"

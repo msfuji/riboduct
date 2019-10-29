@@ -3,15 +3,15 @@ channels:
   - r
   - bioconda
 dependencies:
-  - snakemake=3.13.3
-  - star=2.5.3a
-  - subread=1.6.2
-  - samtools=1.6
-  - picard=2.14.1
-  - rna-seqc=1.1.8
-  - r=3.3.1
-  - r-dplyr=0.5.0
-  - r-data.table=1.10.0
-  - r-readr=0.2.2
+  - snakemake
+  - star
+  - subread
+  - samtools
+  - picard
+  - rna-seqc
+  - r
+  - r-dplyr
+  - r-data.table
+  - r-readr
   - java-jdk=7.0.91
   - pandas
