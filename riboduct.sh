@@ -8,11 +8,12 @@ config_yaml=$2
 #
 if [ $command = "install" ]; then
   echo "Installing riboduct..."
-  conda config --add channels r
-  conda config --add channels defaults
-  conda config --add channels conda-forge
-  conda config --add channels bioconda
-  conda env create --name riboduct --file environment.yaml
+#  conda config --add channels r
+#  conda config --add channels defaults
+#  conda config --add channels conda-forge
+#  conda config --add channels bioconda
+#  conda env create --name riboduct --file environment.yaml
+  mamba create -c bioconda -c conda-forge -c r -n riboduct snakemake-minimal star subread samtools picard rna-seqc r r-dplyr r-data.table r-readr pandas bx-python
   echo "DONE."
   exit 0
 elif [ -z $config_yaml ]; then
@@ -38,7 +39,7 @@ fi
 #
 snake_command="snakemake --config env_dir=$CONDA_PREFIX --configfile $config_yaml"
 if $use_sge; then
-  snake_command=`echo $snake_command --cluster \"qsub -l os7 -cwd -pe def_slot {threads} -l s_vmem={params.memory},mem_req={params.memory} -o {log} -e {log}\" --jobs $sge_jobs`
+  snake_command=`echo $snake_command --cluster \"qsub -terse -cwd -pe def_slot {threads} -l s_vmem={params.memory},mem_req={params.memory} -o {log} -e {log}\" --jobs $sge_jobs`
 fi
 
 #

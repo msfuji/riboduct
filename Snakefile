@@ -18,7 +18,8 @@ rule index:
         config["db_dir"]+"/genome/genome.dict",
         config["db_dir"]+"/star_index/SAindex",
         config["db_dir"]+"/gene_model/gene_name.txt",
-        config["db_dir"]+"/gene_model/annotation.exon.gtf"
+        config["db_dir"]+"/gene_model/annotation.exon.gtf",
+        config["db_dir"]+"/gene_model/collapsed.gtf"
 
 rule link_genome:
     input:
@@ -65,7 +66,7 @@ rule dict_genome:
     log:
         config["db_dir"]+"/log/dict_genome/"
     params:
-        memory="5.3G"
+        memory="20G"
     shell:
         bin_dir+"picard CreateSequenceDictionary "
         "R={input} "
@@ -107,6 +108,19 @@ rule exon_gtf:
         memory="5.3G"
     shell:
         "awk '$3==\"exon\"' {input} > {output}"
+
+rule collapse_gtf:
+    input:
+        config["db_dir"]+"/gene_model/annotation.gtf"
+    output:
+        config["db_dir"]+"/gene_model/collapsed.gtf"
+    log:
+        config["db_dir"]+"/log/collapse_gtf/"
+    params:
+        memory="5.3G"
+    shell:
+        bin_dir+"python3 "
+        "scripts/collapse_annotation.py {input} {output}"
 
 rule star_index:
     input:
@@ -272,26 +286,22 @@ rule rna_seqc:
         bam="star_2_pass/{sample_id}/Aligned.sortedByCoord.out.markdup.bam",
         bai="star_2_pass/{sample_id}/Aligned.sortedByCoord.out.markdup.bam.bai"
     output:
-        "qc/rna_seqc/{sample_id}/metrics.tsv"
+        "qc/rna_seqc/{sample_id}/{sample_id}.metrics.tsv"
     params:
-        java7=config["env_dir"]+"/../../pkgs/java-jdk-7.0.91-1/bin/java",
-        jar=config["env_dir"]+"/share/rna-seqc-1.1.8-0/RNA-SeQC_v1.1.8.jar",
-        gtf=config["db_dir"]+"/gene_model/annotation.gtf",
-        genome=config["db_dir"]+"/genome/genome.fa",
+        gtf=config["db_dir"]+"/gene_model/collapsed.gtf",
         memory="5.3G",
         outdir="qc/rna_seqc/{sample_id}/"
     log:
         "log/rna_seqc/{sample_id}/"
     shell:
-        "{params.java7} -Xmx2G -jar {params.jar} "
-        "-s \"{wildcards.sample_id}|{input.bam}|NA\" "
-        "-t {params.gtf} "
-        "-r {params.genome} "
-        "-o {params.outdir} "
+        bin_dir+"rnaseqc "
+        "-s \"{wildcards.sample_id}\" "
+        "{params.gtf} {input.bam} {params.outdir}"
+
 
 rule merge_rna_seqc:
     input:
-        expand("qc/rna_seqc/{sample_id}/metrics.tsv", sample_id=config["fastq"])
+        expand("qc/rna_seqc/{sample_id}/{sample_id}.metrics.tsv", sample_id=config["fastq"])
     output:
         "qc/rna_seqc/metrics.txt"
     log:
@@ -340,7 +350,7 @@ rule merge_feature_counts:
 
 rule calc_fpkm:
     input:
-        count="expression/feature_counts/counts.txt",
+        fcount="expression/feature_counts/counts.txt",
         name=config["db_dir"]+"/gene_model/gene_name.txt"
     output:
         raw_counts="expression/raw_counts.gct",
@@ -352,4 +362,4 @@ rule calc_fpkm:
         memory="5.3G",
         outdir="expression/"
     shell:
-        bin_dir+"Rscript scripts/calc_fpkm.R {input.count} {input.name} {params.outdir}"
+        bin_dir+"Rscript scripts/calc_fpkm.R {input.fcount} {input.name} {params.outdir}"

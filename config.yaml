@@ -1,8 +1,8 @@
 # path to gzipped ref genome
-genome_fa_gz: ./GRCh37.p13.genome.fa.gz
+genome_fa_gz: /home/msfuji/GRCh37.p13.genome.fa.gz
 
 # path to gzipped GENCODE annotation
-annotation_gtf_gz: ./gencode.v19.annotation.gtf.gz
+annotation_gtf_gz: /home/msfuji/gencode.v19.annotation.gtf.gz
 
 # directory where you want to install database
 db_dir: /home/msfuji/resource/riboduct_db
