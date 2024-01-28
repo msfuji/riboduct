@@ -14,15 +14,11 @@ bash Miniconda3-latest-Linux-x86_64.sh
 ```
 
 ### 2. Install pipeline
-Download and install `riboduct`.
+Download and install `riboduct`. Here you can replace `RIBODUCT_ENV` with your favorite name.
 ```
 git clone https://github.com/msfuji/riboduct.git
 cd riboduct
-# activate conda
-eval "$($HOME/miniconda3/bin/conda shell.bash hook)"
-conda install mamba -c conda-forge
-bash riboduct.sh install
-conda deactivate
+bash riboduct.sh install RIBODUCT_ENV
 ```
 
 ### 3. Set up database
@@ -45,10 +41,8 @@ parameter points to the database directory. Also modify two other parameters
 (`genome_fa_gz`, `annotation_gtf_gz`) for the downloaded files of genome and
 gene annotation. Start indexing of database.
 ```
-eval "$($HOME/miniconda3/bin/conda shell.bash hook)"
-conda activate riboduct
+conda activate RIBODUCT_ENV
 bash riboduct.sh index config.yaml
-conda deactivate
 conda deactivate
 ```
 
@@ -62,9 +56,7 @@ Modify `config.yaml`. First, add path of FASTQ files you want to analyze.
 Also modify `db_dir` to point the directory where you installed database.
 When finished, start running the pipeline.
 ```
-eval "$($HOME/miniconda3/bin/conda shell.bash hook)"
-conda activate riboduct
+conda activate RIBODUCT_ENV
 bash riboduct.sh run config.yaml
-conda deactivate
 conda deactivate 
 ```

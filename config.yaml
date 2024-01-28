@@ -1,14 +1,14 @@
 # path to gzipped ref genome
-genome_fa_gz: /home/msfuji/GRCh37.p13.genome.fa.gz
+genome_fa_gz: /home/ec2-user/GRCh37.p13.genome.fa.gz
 
 # path to gzipped GENCODE annotation
-annotation_gtf_gz: /home/msfuji/gencode.v19.annotation.gtf.gz
+annotation_gtf_gz: /home/ec2-user/gencode.v19.annotation.gtf.gz
 
 # directory where you want to install database
-db_dir: /home/msfuji/resource/riboduct_db
+db_dir: /home/ec2-user/resource/riboduct_db
 
 # if you use SGE cluster, set the maximum number of jobs
-sge_jobs: 100
+# sge_jobs: 100
 
 #readFilesCommand: "cat" # for uncompressed FASTQ
 #readFilesCommand: "gunzip -c" # for gzipped FASTQ

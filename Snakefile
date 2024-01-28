@@ -130,7 +130,7 @@ rule star_index:
         config["db_dir"]+"/star_index/SAindex"
     log:
         config["db_dir"]+"/log/star_index/"
-    threads: 8
+    threads: 4
     params:
         memory="5.3G",
         outdir=config["db_dir"]+"/star_index/"
@@ -183,7 +183,7 @@ rule star_1_pass:
         outdir="star_1_pass/{sample_id}/"
     log:
         "log/star_1_pass/{sample_id}/"
-    threads: 8
+    threads: 4
     shell:
         bin_dir+"STAR "
         "--genomeDir {params.index} "
