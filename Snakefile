@@ -4,7 +4,7 @@ rule all:
     input:
         "expression/raw_counts.gct",
         "expression/fpkm.gct",
-        "expression/fpkm_uq.gct",
+        # "expression/fpkm_uq.gct",
         "qc/rna_seqc/metrics.txt"
 
 ################################################################################
@@ -354,8 +354,8 @@ rule calc_fpkm:
         name=config["db_dir"]+"/gene_model/gene_name.txt"
     output:
         raw_counts="expression/raw_counts.gct",
-        fpkm="expression/fpkm.gct",
-        fpkm_uq="expression/fpkm_uq.gct"
+        fpkm="expression/fpkm.gct"
+        # fpkm_uq="expression/fpkm_uq.gct"
     log:
         "log/calc_fpkm/"
     params:
