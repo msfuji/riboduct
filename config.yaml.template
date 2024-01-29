@@ -1,0 +1,15 @@
+# path to gzipped ref genome
+genome_fa_gz: /root/riboduct-db/genome/genome.fa.gz
+
+# path to gzipped GENCODE annotation
+annotation_gtf_gz: /root/riboduct-db/gene_model/annotation.gtf.gz
+
+# directory where you want to install database
+db_dir: /root/riboduct-db
+
+readFilesCommand: "bunzip2 -c" # for bzip2-compressed FASTQ
+
+fastq:
+  SAMPLE_NAME:
+    - fastq/r1.fastq.bz2
+    - fastq/r2.fastq.bz2
